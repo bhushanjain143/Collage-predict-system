@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, session
+from flask import Flask, request, jsonify, session, send_from_directory, abort
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 import os
@@ -7,6 +7,8 @@ import json
 import bcrypt
 from datetime import datetime
 
+from llm_service import get_ai_public_config, run_llm_task
+
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'explainai-stable-dev-key-2025')
 
@@ -14,6 +16,7 @@ app.secret_key = os.environ.get('SECRET_KEY', 'explainai-stable-dev-key-2025')
 CORS(app, supports_credentials=True, origins=[
     "http://127.0.0.1:5500", "http://localhost:5500",
     "http://127.0.0.1:5000", "http://localhost:5000",
+    "http://127.0.0.1:8000", "http://localhost:8000",
     "null"  # file:// origin during local dev
 ])
 
@@ -163,6 +166,31 @@ class UserScholarshipDislike(db.Model):
     __table_args__ = (db.UniqueConstraint('user_id', 'scholarship_id'),)
 
 
+class SavedPrediction(db.Model):
+    """Logged-in user's saved counselling runs (shortlist snapshot)."""
+    __tablename__ = 'saved_predictions'
+    id           = db.Column(db.Integer, primary_key=True)
+    user_id      = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    title        = db.Column(db.String(200), default='College prediction run')
+    payload_json = db.Column(db.Text, nullable=False)
+    created_at   = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def to_list_item(self):
+        try:
+            payload = json.loads(self.payload_json) if self.payload_json else {}
+        except json.JSONDecodeError:
+            payload = {}
+        colleges = payload.get('colleges') or []
+        return {
+            'id': self.id,
+            'title': self.title,
+            'created_at': self.created_at.isoformat() if self.created_at else None,
+            'percentile': payload.get('form', {}).get('percentile'),
+            'category': payload.get('form', {}).get('category'),
+            'college_count': len(colleges),
+        }
+
+
 # ── Seat type mapping ──────────────────────────────────────────────────────────
 # Maps frontend category values → MHT-CET seat type code prefixes
 CATEGORY_CODE_MAP = {
@@ -237,16 +265,105 @@ def get_session_user():
         return None
 
 
+# ── Static site root (parent of /backend) for single-origin deploys ───────────
+_SITE_ROOT = os.path.abspath(os.path.join(_backend_dir, '..'))
+
+
 # ── Routes ─────────────────────────────────────────────────────────────────────
 
 @app.route('/')
 def home():
-    return "ExplainAI backend is running!"
+    index_path = os.path.join(_SITE_ROOT, 'index.html')
+    if os.path.isfile(index_path):
+        return send_from_directory(_SITE_ROOT, 'index.html')
+    return jsonify({
+        'message': 'ExplainAI API is running',
+        'hint': 'Open index.html from the project root, or deploy with static files beside /backend.',
+    })
 
 
 @app.route('/api/test')
 def test():
     return {"message": "Hello from Flask!"}
+
+
+@app.route('/api/config')
+def public_config():
+    count_2025 = Cutoff.query.filter(Cutoff.year == 2025).count()
+    data_year = 2025 if count_2025 > 0 else 2024
+    row_count = Cutoff.query.filter(Cutoff.year == data_year).count()
+    ai = get_ai_public_config()
+    return jsonify({
+        'status': 'success',
+        'app_name': 'ExplainAI — MHT-CET college predictor & counselling',
+        'data_year': data_year,
+        'cutoff_rows_approx': row_count,
+        'ai_enabled': ai['ai_enabled'],
+        'ai_provider': ai['provider'],
+        'ai_tasks': ai['tasks'],
+    })
+
+
+@app.route('/api/ai/explain', methods=['POST'])
+def ai_explain():
+    data = request.get_json(silent=True) or {}
+    task = (data.get('task') or 'explain_list').strip()
+    if task not in ('explain_list', 'compare', 'guidance'):
+        task = 'explain_list'
+    ctx = {
+        'percentile': data.get('percentile'),
+        'category': data.get('category'),
+        'city': data.get('city'),
+    }
+    colleges = data.get('colleges')
+    compare_pair = data.get('compare_pair')
+    if not isinstance(colleges, list):
+        colleges = []
+    if compare_pair is not None and not isinstance(compare_pair, list):
+        compare_pair = None
+    out = run_llm_task(task, ctx, colleges, compare_pair)
+    return jsonify({
+        'status': out.get('status', 'ok'),
+        'text': out.get('text', ''),
+        'provider': out.get('provider'),
+        'error': out.get('error'),
+    })
+
+
+@app.route('/api/predictions', methods=['GET'])
+def list_predictions():
+    user = get_session_user()
+    if not user:
+        return jsonify({'status': 'error', 'error': 'Not logged in.'}), 401
+    rows = (
+        SavedPrediction.query.filter_by(user_id=user.id)
+        .order_by(SavedPrediction.created_at.desc())
+        .limit(50)
+        .all()
+    )
+    return jsonify({'status': 'success', 'predictions': [r.to_list_item() for r in rows]})
+
+
+@app.route('/api/predictions', methods=['POST'])
+def save_prediction():
+    user = get_session_user()
+    if not user:
+        return jsonify({'status': 'error', 'error': 'Not logged in.'}), 401
+    data = request.get_json(silent=True) or {}
+    form = data.get('form')
+    colleges = data.get('colleges')
+    if not isinstance(form, dict) or not isinstance(colleges, list):
+        return jsonify({'status': 'error', 'error': 'Invalid body: need form (object) and colleges (array).'}), 400
+    title = (data.get('title') or 'College prediction run').strip()[:200]
+    payload = {'form': form, 'colleges': colleges[:60]}
+    row = SavedPrediction(
+        user_id=user.id,
+        title=title,
+        payload_json=json.dumps(payload, ensure_ascii=False)[:500000],
+    )
+    db.session.add(row)
+    db.session.commit()
+    return jsonify({'status': 'success', 'id': row.id})
 
 
 # ── Register ───────────────────────────────────────────────────────────────────
@@ -511,7 +628,16 @@ def colleges():
     count_2025 = Cutoff.query.filter(Cutoff.year == 2025).count()
     use_year = 2025 if count_2025 > 0 else 2024
     use_round = db.session.query(db.func.max(Cutoff.round)).filter(Cutoff.year == use_year).scalar() or 3
-    rows = db.session.query(Cutoff.college_name, Cutoff.city, Cutoff.college_type).filter(Cutoff.year == use_year, Cutoff.round == use_round).distinct().all()
+    q = (request.args.get('q') or '').strip()
+    lim = request.args.get('limit', type=int) or 500
+    lim = max(1, min(lim, 2000))
+
+    base = db.session.query(Cutoff.college_name, Cutoff.city, Cutoff.college_type).filter(
+        Cutoff.year == use_year, Cutoff.round == use_round
+    )
+    if q:
+        base = base.filter(Cutoff.college_name.ilike(f'%{q}%'))
+    rows = base.distinct().order_by(Cutoff.college_name).limit(lim).all()
     return jsonify({'colleges': [{'college_name': r.college_name, 'city': r.city, 'college_type': r.college_type} for r in rows]})
 
 
@@ -1059,6 +1185,20 @@ def undo_dislike_scholarship():
     return jsonify({'status': 'success'})
 
 
+@app.route('/<path:relpath>')
+def serve_public(relpath):
+    """Serve script.js, styles, images from project root when using one Flask process."""
+    if relpath.startswith('api/'):
+        abort(404)
+    safe = os.path.normpath(os.path.join(_SITE_ROOT, relpath))
+    root = os.path.abspath(_SITE_ROOT)
+    if not safe.startswith(root):
+        abort(404)
+    if os.path.isfile(safe):
+        return send_from_directory(os.path.dirname(safe), os.path.basename(safe))
+    abort(404)
+
+
 if __name__ == '__main__':
-    port = int(os.environ.get("PORT", 10000))
+    port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port)

@@ -395,6 +395,7 @@ function refreshDashboardName() {
 
     // Update all stats and activity (per-user data)
     updateDashboardStats();
+    loadSavedPredictionRuns();
 }
 
 function getPostLoginRedirect() {
@@ -405,13 +406,43 @@ function setPostLoginRedirect(pageId) {
     sessionStorage.setItem('explainai_post_login_redirect', pageId);
 }
 
-const API_BASE = 'http://127.0.0.1:5000';
+/** Same host when Flask serves the UI; Live Server / file:// use local API. */
+const API_BASE = (function () {
+    var proto = window.location.protocol;
+    var port = window.location.port;
+    if (proto === 'file:' || port === '5500') {
+        return 'http://127.0.0.1:5000';
+    }
+    return '';
+})();
+
+/** Filled from GET /api/config — ai_enabled, data_year, etc. */
+var APP_SERVER_CONFIG = { ai_enabled: false, data_year: null, cutoff_rows_approx: 0 };
+
+async function refreshAppServerConfig() {
+    try {
+        var res = await fetch(API_BASE + '/api/config', { credentials: 'omit' });
+        if (!res.ok) return;
+        var j = await res.json();
+        if (j.status === 'success') {
+            APP_SERVER_CONFIG.ai_enabled = !!j.ai_enabled;
+            APP_SERVER_CONFIG.data_year = j.data_year;
+            APP_SERVER_CONFIG.cutoff_rows_approx = j.cutoff_rows_approx;
+        }
+    } catch (e) {
+        /* offline */
+    }
+}
+
+function _stripMdBold(s) {
+    return String(s || '').replace(/\*\*/g, '');
+}
 
 // ---------- SEO / DOCUMENT META (SPA) ----------
 const PAGE_SEO = {
     home: {
-        title: 'ExplainAI — MHT-CET College Prediction System',
-        description: 'MHT-CET college predictor and scholarship finder for Maharashtra engineering admissions. Cutoff-based suggestions; not affiliated with CET Cell.'
+        title: 'ExplainAI — MHT-CET College Predictor & Counselling',
+        description: 'MHT-CET college predictor, CAP-style counselling prep, optional AI summaries, and scholarship hints for Maharashtra. Not affiliated with CET Cell.'
     },
     counseling: {
         title: 'College Counselor — ExplainAI',
@@ -443,7 +474,7 @@ const PAGE_SEO = {
     },
     dashboard: {
         title: 'Dashboard — ExplainAI',
-        description: 'Your ExplainAI dashboard: saved colleges, scholarships, and quick access to tools.'
+        description: 'Your counselling dashboard: saved prediction runs, liked colleges, scholarships, and quick links to tools.'
     }
 };
 
@@ -797,6 +828,7 @@ function handleLogin(e) {
             const dest1 = getPostLoginRedirect() || 'home';
             sessionStorage.removeItem('explainai_post_login_redirect');
             showPage(dest1);
+            updateSaveRunButtonVisibility();
         } catch (err) {
             // Backend not available — fallback for local dev (no DB)
             if (errorDiv) errorDiv.textContent = 'Cannot connect to server. Check that the backend is running.';
@@ -1300,6 +1332,131 @@ function _renderActivity() {
     }
 }
 
+async function loadSavedPredictionRuns() {
+    var listEl = document.getElementById('dashPredictionsList');
+    var cntEl = document.getElementById('dashPredictionRunsCount');
+    if (!listEl) return;
+    if (!getCurrentUser() || !getCurrentUser().id) {
+        listEl.innerHTML = '<div class="dai-empty">Sign in and use &quot;Save run&quot; on results to store a shortlist here.</div>';
+        if (cntEl) cntEl.textContent = '0';
+        return;
+    }
+    try {
+        var res = await fetch(API_BASE + '/api/predictions', { credentials: 'include', headers: _authHeaders() });
+        var data = await res.json();
+        if (data.status !== 'success' || !data.predictions || !data.predictions.length) {
+            listEl.innerHTML = '<div class="dai-empty">No saved runs yet — open results and click Save run.</div>';
+            if (cntEl) cntEl.textContent = '0';
+            return;
+        }
+        if (cntEl) cntEl.textContent = String(data.predictions.length);
+        listEl.innerHTML = data.predictions.map(function (p) {
+            var sub = (p.percentile != null ? 'Pct ' + p.percentile : '') +
+                (p.category ? ' · ' + p.category : '') +
+                (p.college_count != null ? ' · ' + p.college_count + ' colleges' : '');
+            return '<div class="dash-activity-item dai-blue">' +
+                '<div class="dai-dot"></div><div class="dai-body">' +
+                '<div class="dai-name dai-name-wrap">' + (p.title || 'Run') + '</div>' +
+                '<div class="dai-meta">' + (p.created_at || '') + (sub ? ' — ' + sub : '') + '</div>' +
+                '</div></div>';
+        }).join('');
+    } catch (e) {
+        listEl.innerHTML = '<div class="dai-empty">Could not load saved runs (is the backend running?).</div>';
+        if (cntEl) cntEl.textContent = '—';
+    }
+}
+
+function updateSaveRunButtonVisibility() {
+    var saveBtn = document.getElementById('btnSavePredictionRun');
+    if (!saveBtn) return;
+    saveBtn.style.display = getCurrentUser() && getCurrentUser().id ? '' : 'none';
+}
+
+async function savePredictionRun() {
+    var grid = document.getElementById('resultsGrid');
+    if (!grid || !grid._all || !grid._all.length) {
+        alert('No results to save.');
+        return;
+    }
+    if (!getCurrentUser() || !getCurrentUser().id) {
+        alert('Please sign in to save this prediction run to your account.');
+        showPage('login');
+        return;
+    }
+    var form = {
+        percentile: parseFloat(sessionStorage.getItem('inputPercentile') || '0'),
+        category: sessionStorage.getItem('inputCategory') || '',
+        city: sessionStorage.getItem('inputCity') || ''
+    };
+    var title = 'Run · pct ' + form.percentile + ' · ' + (form.category || 'OPEN');
+    try {
+        var res = await fetch(API_BASE + '/api/predictions', {
+            method: 'POST',
+            credentials: 'include',
+            headers: _authHeaders(),
+            body: JSON.stringify({ title: title, form: form, colleges: grid._all })
+        });
+        var data = await res.json();
+        if (data.status === 'success') {
+            alert('Saved to your account. View it on the Dashboard.');
+            loadSavedPredictionRuns();
+        } else {
+            alert(data.error || 'Could not save.');
+        }
+    } catch (e) {
+        alert('Network error while saving.');
+    }
+}
+
+async function requestAiInsight(task) {
+    var grid = document.getElementById('resultsGrid');
+    var panel = document.getElementById('aiInsightPanel');
+    var meta = document.getElementById('aiInsightMeta');
+    var txt = document.getElementById('aiInsightText');
+    if (!grid || !panel || !txt) return;
+    var colleges = grid._all || [];
+    if (!colleges.length) {
+        alert('No colleges to analyse.');
+        return;
+    }
+    panel.style.display = 'block';
+    meta.textContent = 'Generating…';
+    txt.textContent = '';
+    var body = {
+        task: task === 'guidance' ? 'guidance' : 'explain_list',
+        percentile: parseFloat(sessionStorage.getItem('inputPercentile') || '0'),
+        category: sessionStorage.getItem('inputCategory') || '',
+        city: sessionStorage.getItem('inputCity') || '',
+        colleges: colleges.slice(0, 40).map(function (c) {
+            return {
+                college_name: c.college_name,
+                branch: c.branch,
+                chance: c.chance,
+                cutoff_percentile: c.cutoff_percentile,
+                city: c.city
+            };
+        })
+    };
+    try {
+        var res = await fetch(API_BASE + '/api/ai/explain', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body)
+        });
+        var data = await res.json();
+        var provider = data.provider ? ' · ' + data.provider : '';
+        var st = data.status === 'ok' ? 'AI insight' : (data.status === 'disabled' ? 'Guidance (offline mode)' : 'Guidance');
+        meta.textContent = st + provider;
+        txt.textContent = data.text || data.error || 'No text returned.';
+        try {
+            sessionStorage.setItem('explainai_last_ai_summary', txt.textContent);
+        } catch (e2) { /* quota */ }
+    } catch (e) {
+        meta.textContent = 'Error';
+        txt.textContent = 'Could not reach the AI service. Check your connection and that the backend is running.';
+    }
+}
+
 
 function openModal(key) {
     const m = modals[key];
@@ -1440,6 +1597,13 @@ async function handleCounselingSubmit(e) {
     btn.disabled = true;
     btn.innerHTML = '<span class="cc-spinner"></span> Searching colleges…';
 
+    var aiPan = document.getElementById('aiInsightPanel');
+    var exBar = document.getElementById('resToolbarExtras');
+    if (aiPan) { aiPan.style.display = 'none'; }
+    if (exBar) { exBar.style.display = 'none'; }
+    var csi = document.getElementById('collegeSearchInput');
+    if (csi) { csi.value = ''; }
+
     const finalPercentile = parseFloat(document.getElementById('percentile').value);
     sessionStorage.setItem('inputPercentile', finalPercentile);
 
@@ -1463,7 +1627,7 @@ async function handleCounselingSubmit(e) {
     sessionStorage.setItem('inputCity', formData.city);
 
     try {
-        const response = await fetch('http://127.0.0.1:5000/api/recommend/colleges', {
+        const response = await fetch(API_BASE + '/api/recommend/colleges', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(formData)
@@ -1480,7 +1644,7 @@ async function handleCounselingSubmit(e) {
         }
     } catch (error) {
         console.error('Submission error:', error);
-        alert('Failed to connect to server. Make sure the backend is running on port 5000.');
+        alert('Failed to connect to the API. If you use Live Server, start the Flask backend (default port 5000) or open the app from the same host as the API.');
     } finally {
         btn.disabled = false;
         btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg> Get College Recommendations';
@@ -1494,6 +1658,8 @@ function renderCollegeResults(colleges, filterNote, noResultsHint) {
     var emptyEl  = document.getElementById('resEmpty');
     var bannerEl = document.getElementById('resScholarBanner');
     var showEl   = document.getElementById('resShowing');
+    var exBar    = document.getElementById('resToolbarExtras');
+    var aiPan    = document.getElementById('aiInsightPanel');
     if (!grid) return;
 
     grid.innerHTML = '';
@@ -1513,6 +1679,8 @@ function renderCollegeResults(colleges, filterNote, noResultsHint) {
 
     if (!colleges || colleges.length === 0) {
         if (countEl) countEl.textContent = 'No Colleges Found';
+        if (exBar) exBar.style.display = 'none';
+        if (aiPan) aiPan.style.display = 'none';
         if (emptyEl) {
             var msg = noResultsHint ||
                 'No colleges found for your filters. Try changing your branch, city, or college type.';
@@ -1541,6 +1709,15 @@ function renderCollegeResults(colleges, filterNote, noResultsHint) {
     grid._allMed  = allMed;
     grid._allLow  = allLow;
     grid._all     = colleges;
+    grid._activeFilter = 'all';
+
+    if (exBar) exBar.style.display = 'flex';
+    var saveBtn = document.getElementById('btnSavePredictionRun');
+    var ai1 = document.getElementById('btnAiExplainList');
+    var ai2 = document.getElementById('btnAiGuidance');
+    if (saveBtn) saveBtn.style.display = getCurrentUser() && getCurrentUser().id ? '' : 'none';
+    if (ai1) ai1.style.display = APP_SERVER_CONFIG.ai_enabled ? '' : 'none';
+    if (ai2) ai2.style.display = APP_SERVER_CONFIG.ai_enabled ? '' : 'none';
 
     // Update all counts
     _setFilterCounts(colleges.length, allHigh.length, allMed.length, allLow.length);
@@ -1822,6 +1999,22 @@ function filterResults(btn, level) {
         if (showEl) showEl.textContent = list.length + ' Low Chance college' + (list.length !== 1 ? 's' : '');
     }
 
+    grid._activeFilter = level;
+
+    var q = (document.getElementById('collegeSearchInput') && document.getElementById('collegeSearchInput').value || '').trim().toLowerCase();
+    if (q) {
+        var before = list.length;
+        list = list.filter(function (c) {
+            var n = (c.college_name || '').toLowerCase();
+            var b = (c.branch || '').toLowerCase();
+            return n.indexOf(q) !== -1 || b.indexOf(q) !== -1;
+        });
+        if (showEl) {
+            showEl.textContent = list.length + ' match' + (list.length !== 1 ? 'es' : '') +
+                ' for “' + q + '”' + (before !== list.length ? ' (of ' + before + ' in this tier)' : '');
+        }
+    }
+
     _renderCards(grid, list);
 }
 
@@ -1989,7 +2182,7 @@ async function handleScholarshipSubmit(e) {
     };
 
     try {
-        const res = await fetch('http://localhost:5000/api/recommend/scholarships', {
+        const res = await fetch(API_BASE + '/api/recommend/scholarships', {
             method: 'POST',
             credentials: 'include',
             headers: {
@@ -2293,6 +2486,14 @@ function _updateScholarshipBanner() {
 // ---------- HAMBURGER MENU & INITIAL SETUP ----------
 document.addEventListener('DOMContentLoaded', function() {
     initSeoFromLocation();
+    var collegeSearchInput = document.getElementById('collegeSearchInput');
+    if (collegeSearchInput) {
+        collegeSearchInput.addEventListener('input', function () {
+            var btn = document.querySelector('#resultFilterChips .rfc.rfc-active');
+            if (!btn || !document.getElementById('resultsGrid') || !document.getElementById('resultsGrid')._all) return;
+            filterResults(btn, btn.dataset.filter || 'all');
+        });
+    }
     const footerYear = document.getElementById('site-footer-year');
     if (footerYear) {
         footerYear.textContent = '\u00A9 ' + new Date().getFullYear() + ' ExplainAI';
@@ -2342,6 +2543,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // On load: ALWAYS open home page. Auth state is synced quietly in background.
     (async () => {
+        await refreshAppServerConfig();
         try {
             const res = await fetch(`${API_BASE}/api/auth/me`, { credentials: 'include' });
             if (res.ok) {
@@ -2350,6 +2552,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     const u = result.user;
                     setUserLoggedIn(true);
                     setCurrentUser({ id: u.id, name: u.full_name, email: u.email, phone: u.phone || '' });
+                    updateSaveRunButtonVisibility();
                 } else {
                     localStorage.removeItem('explainai_user_logged_in');
                     localStorage.removeItem('explainai_user');
@@ -2472,8 +2675,24 @@ async function downloadCollegeList() {
     doc.setFont('helvetica', 'normal');
     doc.text('You may modify this cutoff list as per your preferences and choice of branch, college, or category.', margin + 24, y + 4.5);
 
-    // ── Summary line ──
+    var aiSummaryPdf = '';
+    try { aiSummaryPdf = sessionStorage.getItem('explainai_last_ai_summary') || ''; } catch (eAi) { }
     y += 10;
+    if (aiSummaryPdf) {
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(9);
+        doc.setTextColor(17, 17, 17);
+        doc.text('Counselling summary (last AI / offline insight)', margin, y);
+        y += 4;
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(7.1);
+        doc.setTextColor(55, 65, 85);
+        var aiLines = doc.splitTextToSize(_stripMdBold(aiSummaryPdf).substring(0, 4500), pageW - margin * 2);
+        doc.text(aiLines, margin, y);
+        y += aiLines.length * 3.35 + 3;
+    }
+
+    // ── Summary line ──
     doc.setFontSize(8);
     doc.setFont('helvetica', 'normal');
     doc.setTextColor(60, 60, 60);

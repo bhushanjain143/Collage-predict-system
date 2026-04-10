@@ -37,3 +37,6 @@ mahacet-fe-admission/data/**/*.zip
 # Large archives / CAP PDFs under nested ExplainAI copy (keep source in repo without binaries)
 New folder/**/*.zip
 New folder/**/*.pdf
+
+# ExplainAI local SQLite (regenerated per machine)
+New folder/ExplainAI-main/ExplainAI-main/backend/instance/*.db

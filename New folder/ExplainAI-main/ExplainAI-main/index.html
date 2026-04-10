@@ -7,16 +7,16 @@
     <meta name="description" id="meta-description" content="MHT-CET college predictor and scholarship finder for Maharashtra engineering admissions. Cutoff-based suggestions; not affiliated with CET Cell.">
     <meta name="robots" content="index, follow">
     <meta name="author" content="ExplainAI">
-    <title>ExplainAI — MHT-CET College Prediction System</title>
+    <title>ExplainAI — MHT-CET College Predictor &amp; Counselling</title>
     <!-- Open Graph -->
     <meta property="og:type" content="website">
-    <meta property="og:title" content="ExplainAI — MHT-CET College &amp; Scholarship Tools">
+    <meta property="og:title" content="ExplainAI — MHT-CET College Predictor &amp; Counselling">
     <meta property="og:description" content="Cutoff-based MHT-CET college ideas and scholarship matching for Maharashtra. Verify on official CET Cell and MahaDBT portals.">
     <meta property="og:locale" content="en_IN">
     <meta property="og:image" content="images/og-cover.svg">
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="ExplainAI — MHT-CET College &amp; Scholarship Tools">
+    <meta name="twitter:title" content="ExplainAI — MHT-CET College Predictor &amp; Counselling">
     <meta name="twitter:description" content="Cutoff-based MHT-CET college ideas and scholarship matching for Maharashtra.">
     <meta name="twitter:image" content="images/og-cover.svg">
     <script type="application/ld+json">
@@ -25,8 +25,8 @@
       "@graph": [
         {
           "@type": "WebApplication",
-          "name": "ExplainAI",
-          "description": "MHT-CET college predictor and scholarship finder for Maharashtra engineering admissions using published cutoffs.",
+          "name": "ExplainAI — MHT-CET College Predictor & Counselling",
+          "description": "MHT-CET college predictor, CAP-style counselling tools, and scholarship hints for Maharashtra engineering admissions using published cutoffs.",
           "applicationCategory": "EducationalApplication",
           "operatingSystem": "Web",
           "inLanguage": "en-IN",
@@ -402,6 +402,18 @@
             </button>
         </div>
 
+        <div class="res-toolbar-extras" id="resToolbarExtras" style="display:none;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:12px">
+            <label for="collegeSearchInput" class="skip-link" style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0">Search by college name</label>
+            <input type="search" id="collegeSearchInput" placeholder="Search college or branch…" autocomplete="off" style="flex:1;min-width:200px;max-width:360px;padding:10px 12px;border-radius:10px;border:1px solid rgba(15,23,42,.15);font-size:14px" />
+            <button type="button" class="res-download-btn" id="btnSavePredictionRun" onclick="savePredictionRun()" style="display:none">Save run</button>
+            <button type="button" class="res-download-btn" id="btnAiExplainList" onclick="requestAiInsight('explain_list')" style="display:none">AI: explain list</button>
+            <button type="button" class="res-download-btn" id="btnAiGuidance" onclick="requestAiInsight('guidance')" style="display:none">AI: counselling tips</button>
+        </div>
+        <div id="aiInsightPanel" style="display:none;margin-bottom:16px;padding:16px;border-radius:12px;background:#0f172a;color:#e2e8f0;font-size:14px;line-height:1.55;border:1px solid rgba(148,163,184,.35)">
+            <div id="aiInsightMeta" style="font-size:11px;letter-spacing:.04em;text-transform:uppercase;opacity:.75;margin-bottom:8px"></div>
+            <div id="aiInsightText" style="white-space:pre-wrap"></div>
+        </div>
+
         <!-- Results cards grid -->
         <div class="results-grid" id="resultsGrid"></div>
 
@@ -741,6 +753,12 @@
             <div class="dash-stats-v2">
                 <div class="dash-stat-v2 dash-stat-blue">
                     <div class="dsv2-body">
+                        <div class="dash-stat-num" id="dashPredictionRunsCount">0</div>
+                        <div class="dash-stat-label">Saved prediction runs</div>
+                    </div>
+                </div>
+                <div class="dash-stat-v2 dash-stat-blue">
+                    <div class="dsv2-body">
                         <div class="dash-stat-num" id="dashAnalysedCount">—</div>
                         <div class="dash-stat-label">Colleges Analysed</div>
                     </div>
@@ -783,6 +801,16 @@
 
         
 
+        <!-- Saved counselling runs (server) -->
+        <div class="dash-panel" style="margin-bottom:20px">
+            <div class="dash-panel-title">
+                <span>Saved prediction runs</span>
+            </div>
+            <div class="dash-activity-list" id="dashPredictionsList">
+                <div class="dai-empty">Sign in and use &quot;Save run&quot; on results to store a shortlist here.</div>
+            </div>
+        </div>
+
         <!-- Two column: Colleges Activity + Scholarships Activity -->
         <div class="dash-two-col">
             <!-- Colleges Saved -->
@@ -814,7 +842,7 @@
 <footer class="site-footer" role="contentinfo">
     <div class="site-footer-inner">
         <div class="site-footer-brand">Explain<span>AI</span></div>
-        <p>ExplainAI helps you explore MHT-CET engineering options using published cutoff data and draft scholarship matches. It is <strong>not</strong> affiliated with CET Cell, DTE, or any college. All allotments, fees, and final rules are decided by the competent authority.</p>
+        <p>ExplainAI is an <strong>MHT-CET college predictor and counselling prep</strong> tool: cutoff-backed lists, optional AI explanations (when configured on the server), and scholarship hints. It is <strong>not</strong> affiliated with CET Cell, DTE, or any college. All allotments, fees, and final rules are decided by the competent authority.</p>
         <p>Always verify cutoffs, documents, and deadlines on official Maharashtra CET / CAP notices, MahaDBT, and NSP before you act.</p>
         <div class="site-footer-meta">
             <span>MHT-CET · Maharashtra</span>
