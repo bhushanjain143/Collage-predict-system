@@ -14,6 +14,9 @@ scripts/.venv/
 # Portal local venv
 india_engineering_ai_portal/.venv/
 
+# Large dataset archive (exceeds GitHub 100MB limit; regenerate or download separately)
+india_engineering_ai_portal/data--main.zip
+
 # OS / editor
 .DS_Store
 Thumbs.db
