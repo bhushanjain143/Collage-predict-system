@@ -1,0 +1,49 @@
+# Sync public Maharashtra FE portal documents into Maharashtra-FE-Admission-Dataset/
+#
+# Notes:
+# - Runs weekly and on demand (workflow_dispatch).
+# - Pushing updated PDFs/CSVs back to the default branch requires a PAT or GITHUB_TOKEN
+#   with contents: write and a checkout step that uses the bot account. Uncomment the block
+#   below once you are comfortable with automated commits.
+
+name: Maharashtra FE data sync
+
+on:
+  schedule:
+    - cron: "0 6 * * 1" # Mondays 06:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run portal scraper
+        run: |
+          python scripts/maha_fe_admission/scrape_portal.py \
+            --base-url https://fe2025.mahacet.org/StaticPages/HomePage \
+            --output-dir Maharashtra-FE-Admission-Dataset \
+            --timeout 120
+
+      # Uncomment to auto-commit manifest + downloads (requires contents: write at job level).
+      # - name: Commit updates
+      #   run: |
+      #     git config user.name "github-actions"
+      #     git config user.email "github-actions@github.com"
+      #     git add Maharashtra-FE-Admission-Dataset/metadata Maharashtra-FE-Admission-Dataset/Merit_Lists || true
+      #     git diff --staged --quiet || git commit -m "chore: refresh Maharashtra FE dataset manifest"
+      #     git push

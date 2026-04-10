@@ -1,0 +1,36 @@
+{
+  "generated_at_utc": "2026-04-10T16:50:48.729222+00:00",
+  "data_root": "C:/Users/bhushaja/Desktop/STARTS/Namrata/Collage/mahacet-fe-admission/data",
+  "files": [
+    {
+      "file": "CAP_Round_Cutoffs/Round_1/SAMPLE_CAP_Cutoff_MH_2025_Round1.csv",
+      "steps": {
+        "deduplication": {
+          "duplicates_removed": 0,
+          "sparse_columns_dropped": [
+            "Closing_Merit",
+            "Official_Source_URL"
+          ],
+          "index_columns_dropped": []
+        },
+        "missing_data": {
+          "imputed_numeric": 0,
+          "imputed_categorical": 0,
+          "rows_dropped_low_missing": 0,
+          "unreliable_columns": []
+        },
+        "format": {
+          "columns_date_parsed": [],
+          "columns_fee_parsed": []
+        },
+        "outliers": {
+          "outlier_events": 0
+        },
+        "structural": {
+          "code_mismatches": 0
+        }
+      }
+    }
+  ],
+  "duplicates_removed_total": 0
+}

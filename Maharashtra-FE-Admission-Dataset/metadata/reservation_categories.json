@@ -1,0 +1,42 @@
+{
+  "description": "Common CAP seat-category code prefixes seen in Maharashtra engineering CAP documents. Codes vary by year and programme; verify against the official seat matrix for the admission cycle.",
+  "categories": [
+    {
+      "code": "GOPEN",
+      "summary": "General category — open (typical naming pattern; exact rules in official handbook)"
+    },
+    {
+      "code": "LOPEN",
+      "summary": "Ladies — open (pattern example)"
+    },
+    {
+      "code": "GSC",
+      "summary": "General — SC"
+    },
+    {
+      "code": "GST",
+      "summary": "General — ST"
+    },
+    {
+      "code": "GOBC",
+      "summary": "General — OBC"
+    },
+    {
+      "code": "EWS",
+      "summary": "Economically Weaker Section"
+    },
+    {
+      "code": "TFWS",
+      "summary": "Tuition Fee Waiver Scheme (eligibility per State rules)"
+    },
+    {
+      "code": "DEF",
+      "summary": "Defence / subcategories as published"
+    },
+    {
+      "code": "PWD",
+      "summary": "Persons with disability — subcategories as published"
+    }
+  ],
+  "disclaimer": "This file is for software filtering and UI hints only. It is not legal advice and may be incomplete. Always read the official Information Brochure and seat matrix."
+}

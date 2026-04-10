@@ -1,0 +1,101 @@
+Engineering college data — how to use this folder
+=================================================
+
+Scope: keep datasets, exports, and scripts under this Collage repo folder only
+(do not rely on paths outside this tree).
+
+WHAT YOU HAVE
+-------------
+1) data/engineering_colleges_TEMPLATE.csv  
+   Column headers including Institute_Type (IIT / NIT / IIIT / Government /
+   Private as you label them). Duplicate rows per branch when you fill data.
+
+2) data/engineering_colleges_SAMPLE_JoSAA_tier.csv (and .xlsx if generated)  
+   One row per IIT (23), NIT (31), and statutory IIIT (25) from public lists.
+   The FIRST column is Institute_Type so you can filter: IIT / NIT / IIIT.
+   "City" is the usual campus location; institute names follow common official
+   wording. This is NOT a substitute for JoSAA / AICTE verification.
+
+   Excel workbook: open sheet "00_READ_ME", then "02_IIT_only", "03_NIT_only",
+   "04_IIIT_only" if you want each group on its own tab. "01_Combined_..." has
+   all 79 rows in institute order (IIT block, then NIT block, then IIIT block).
+
+3) reference/AICTE_bulk_college_list_howto.txt  
+   How to export the thousands of private + government / aided engineering
+   colleges from AICTE (our sample never contained 6,611+ or 2,265+ rows).
+
+4) dist/engineering_colleges_data_pack.zip  
+   Zip of the CSV (and XLSX when available), template, this guide, and
+   reference/*.txt (including AICTE bulk-export instructions).
+
+IMPORTANT LIMITS
+----------------
+- Nationwide "every private + government engineering college" (~8,800+) with
+  verified cutoffs, fees, and placements cannot be maintained as one static
+  sheet without ongoing sourcing from each state admission authority and each
+  institute.
+- Cutoffs depend on exam (JEE Main, state CET, etc.), year, counselling round,
+  category, quota, and sometimes gender — always record those dimensions in
+  your sheet, not a single vague "percentile".
+- Fees and scholarships change by academic year, programme, and quota — use
+  official fee notices and the institute's scholarship page.
+
+PRIMARY OFFICIAL SOURCES (bookmark these)
+-----------------------------------------
+- JoSAA (IIT, NIT+, IIIT, GFTI joint counselling): https://josaa.nic.in/  
+  Closing ranks / seat matrix: use the year's official PDFs and business rules.
+- CSAB (special rounds for NIT+ system): https://josaa.nic.in/csab/  
+- AICTE approved institutes (master list): https://www.aicte-india.org/  
+- NIRF (subset of institutes, annual snapshot): https://www.nirfindia.org/  
+- State counselling (examples — use your state):  
+  MAHA CET / CAP: https://cetcell.mahacet.org/  
+  KEA (Karnataka): https://cetonline.karnataka.gov.in/  
+  (Search: "<state> engineering admission DTE" for others.)
+
+HOW TO FILL YOUR COLUMNS
+-------------------------
+| Column           | Suggested practice |
+|------------------|--------------------|
+| Institute_Type   | IIT / NIT / IIIT for JoSAA sample; Private / Govt / Aided for AICTE export. |
+| College Name     | Match spelling to brochure / AICTE record. |
+| City             | Main campus city as on official site. |
+| Branch           | One row per programme (e.g. B.Tech CSE). |
+| Cutoff           | Note exam + year + round + category (+ quota). |
+| Fees             | Per-year or total programme + quota; add "as of <date>". |
+| Placement %      | Cite placement report year and how "placed" is defined. |
+| Avg / Highest    | Same source and year as placement %. |
+| Scholarship      | Scheme name + link to institute / government page. |
+
+Maharashtra CAP — last 5 years × rounds 1–5 (template)
+-------------------------------------------------------
+Files (regenerate with `python scripts/maha_cap_round_template.py`):
+
+  data/maha_cap_round_history_long_TEMPLATE.csv  
+    One row per (academic year, CAP round); example college VIIT Pune + sample
+    branch/category; **you fill** closing merit / percentile from CET Cell PDFs.
+
+  data/maha_cap_round_history_wide_TEMPLATE.csv  
+    One row per academic year with columns CAP1..CAP5 for closing merit.
+
+  data/maha_cap_round_history_TEMPLATE.xlsx  
+    Same as above in two sheets + READ_ME.
+
+  reference/MAHARASHTRA_CAP_cutoff_sources.txt  
+    Where official CAP cutoff PDFs are usually published.
+
+REGENERATING FILES
+------------------
+From this Collage folder (repo root — do not use paths outside it):
+
+  pip install -r requirements.txt
+  python scripts/maha_cap_round_template.py
+  python scripts/build_college_data_pack.py
+
+IIIT row count note (25 vs 26)
+------------------------------
+The Ministry sample PDF "list_iiits.pdf" on education.gov.in lists 25 IIIT
+organisations (5 MOE-funded + 20 PPP). Our CSV/XLSX includes those 25.
+Some JoSAA marketing tables say "26 IIITs" for a specific year — that is a
+counselling / grouping convention, not an extra row in the statutory list.
+Always confirm names and codes in the official JoSAA seat matrix PDF for your
+year: https://josaa.nic.in/

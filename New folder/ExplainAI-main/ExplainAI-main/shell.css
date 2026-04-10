@@ -1,0 +1,215 @@
+/**
+ * ExplainAI — layout shell, accessibility, and polish (loads after style.css)
+ */
+
+/* ---- Skip link ---- */
+.skip-link {
+    position: absolute;
+    top: -100px;
+    left: 12px;
+    z-index: 1000;
+    padding: 10px 18px;
+    background: var(--saffron, #d95f1a);
+    color: #fff;
+    font-weight: 600;
+    font-size: 14px;
+    text-decoration: none;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+    transition: top 0.2s ease;
+}
+
+.skip-link:focus {
+    top: 12px;
+    outline: 3px solid #fff;
+    outline-offset: 2px;
+}
+
+/* ---- Fixed header wrapper (nav stays flex layout) ---- */
+.site-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+}
+
+.site-header nav {
+    position: relative;
+    top: auto;
+    left: auto;
+    right: auto;
+    background: rgba(11, 25, 41, 0.92);
+    backdrop-filter: saturate(140%) blur(12px);
+    -webkit-backdrop-filter: saturate(140%) blur(12px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 2px 24px rgba(0, 0, 0, 0.2);
+}
+
+.site-main:focus {
+    outline: none;
+}
+
+/* ---- Hero polish (extends .simple-hero) ---- */
+.simple-hero.hero-pro {
+    min-height: clamp(420px, 78vh, 720px);
+    background-image:
+        radial-gradient(ellipse 100% 80% at 80% 10%, rgba(232, 96, 28, 0.15) 0%, transparent 50%),
+        radial-gradient(ellipse 90% 70% at 50% -15%, rgba(232, 96, 28, 0.28) 0%, transparent 55%),
+        linear-gradient(165deg, #0b1929 0%, #162640 42%, #0b1929 100%);
+}
+
+.simple-hero.hero-pro .simple-hero-content {
+    max-width: 42rem;
+    padding: clamp(1.25rem, 4vw, 2.5rem);
+}
+
+.simple-hero.hero-pro .simple-title {
+    font-size: clamp(1.75rem, 4vw + 1rem, 2.75rem);
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+}
+
+.simple-hero.hero-pro .simple-subtitle {
+    font-size: clamp(1rem, 1.5vw + 0.75rem, 1.125rem);
+    line-height: 1.55;
+    max-width: 36rem;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.simple-hero.hero-pro .simple-btn-primary:focus-visible,
+.simple-hero.hero-pro .simple-btn-secondary:focus-visible {
+    outline: 3px solid rgba(255, 255, 255, 0.9);
+    outline-offset: 3px;
+}
+
+/* ---- Home: value strip ---- */
+.home-value-strip {
+    background: linear-gradient(180deg, rgba(11, 25, 41, 0.04) 0%, transparent 100%);
+    border-bottom: 1px solid rgba(11, 25, 41, 0.06);
+    padding: clamp(1.5rem, 3vw, 2.25rem) 1.25rem;
+}
+
+.home-value-strip-inner {
+    max-width: 960px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem 1.5rem;
+}
+
+.home-value-item {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    padding: 12px 14px;
+    background: #fff;
+    border-radius: 12px;
+    border: 1px solid rgba(11, 25, 41, 0.08);
+    box-shadow: 0 1px 3px rgba(11, 25, 41, 0.04);
+}
+
+.home-value-icon {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, rgba(217, 95, 26, 0.12), rgba(11, 25, 41, 0.06));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--saffron, #d95f1a);
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.home-value-text strong {
+    display: block;
+    font-size: 0.9rem;
+    color: var(--navy, #0b1929);
+    margin-bottom: 4px;
+}
+
+.home-value-text span {
+    font-size: 0.8125rem;
+    color: var(--gray, #6b7280);
+    line-height: 1.45;
+}
+
+/* ---- Site footer ---- */
+.site-footer {
+    background: var(--navy, #0b1929);
+    color: rgba(255, 255, 255, 0.72);
+    padding: 2rem 1.5rem 2.5rem;
+    margin-top: 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.site-footer-inner {
+    max-width: 960px;
+    margin: 0 auto;
+}
+
+.site-footer-brand {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 0.75rem;
+}
+
+.site-footer-brand span {
+    color: var(--saffron-light, #ef7c3a);
+    font-style: italic;
+    font-weight: 900;
+}
+
+.site-footer p {
+    font-size: 0.875rem;
+    line-height: 1.65;
+    margin-bottom: 0.75rem;
+    max-width: 42rem;
+}
+
+.site-footer-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 1.25rem;
+    margin-top: 1.25rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 0.8125rem;
+    color: rgba(255, 255, 255, 0.45);
+}
+
+/* ---- Global focus (keyboard) ---- */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:not([tabindex="-1"]):focus-visible {
+    outline: 2px solid var(--saffron, #d95f1a);
+    outline-offset: 2px;
+}
+
+.nav-links li a.nav-cta:focus-visible {
+    outline-color: #fff;
+}
+
+/* ---- Reduced motion ---- */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+
+    .skip-link {
+        transition: none;
+    }
+}

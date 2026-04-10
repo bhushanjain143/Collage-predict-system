@@ -1,0 +1,39 @@
+How to get the full ~8,800+ engineering (and other) colleges — Private / Government / Aided
+===========================================================================================
+
+The small sample in data/engineering_colleges_SAMPLE_JoSAA_tier.* is ONLY:
+  23 IITs + 31 NITs + 25 statutory IIITs (names + cities + placeholders).
+
+It does NOT contain thousands of private or state government colleges. Those must
+come from the regulator's approved-institute database.
+
+AICTE — approved institutes (bulk export)
+-----------------------------------------
+1) Open the AICTE "Approved Institutes" dashboard (search: "AICTE approved institutes dashboard"
+   if the exact URL changes). The public portal is often:
+   https://facilities.aicte-india.org/
+   or the newer analytics / approval pages linked from https://www.aicte-india.org/
+
+2) Use filters: Programme = Engineering / Technology (or your course), State, etc.
+
+3) Use the site's **Export / Download to Excel** (or CSV) if offered. Policies and
+   UI change — use whatever export the current portal provides.
+
+4) Columns you get from AICTE typically include institute name, address, state,
+   district, programme, intake — they will NOT automatically include JEE cutoffs,
+   placement packages, or fees; you merge those from state counselling sites and
+   each college's own PDFs.
+
+Why your counts (6,611+ private, 2,265+ govt / aided) are not in our ZIP
+-----------------------------------------------------------------------
+Those numbers are national aggregates from surveys / regulator summaries. Shipping
+8,000+ rows with cutoffs and placements would require continuous scraping and would
+still be wrong without per-year, per-exam, per-category context. The JoSAA sample is
+a **starter template**; AICTE + state DTE sites are the **scale path**.
+
+JoSAA "26 IIITs" vs our 25 IIIT rows
+-----------------------------------
+The Ministry's public PDF "list_iiits.pdf" (education.gov.in) enumerates **5 MOE +
+20 PPP = 25** IIIT organisations. Some JoSAA brochures round or group institutes
+differently and quote **26**; always take the **seat matrix / institute list PDF**
+for your admission year on https://josaa.nic.in/ as the final authority.

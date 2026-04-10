@@ -1,0 +1,66 @@
+# Annual (and manual) refresh: discover portal URL, scrape, clean, retrain model.
+#
+# Schedule: August 1st 00:00 UTC each year (adjust for IST if desired).
+# Email alerts: use GitHub repo notification settings / Actions failure alerts.
+# To commit outputs, grant contents:write and add a PAT push step.
+
+name: Annual MAHACET FE data refresh
+
+on:
+  schedule:
+    - cron: "0 0 1 8 *"
+  workflow_dispatch:
+
+defaults:
+  run:
+    working-directory: mahacet-fe-admission
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    env:
+      MAHA_YEARS_BACK: "0"
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: mahacet-fe-admission/requirements.txt
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: URL discovery
+        run: python scraper/url_discovery.py
+
+      - name: Run scraper
+        run: python scraper/scraper_main.py --skip-discovery
+        continue-on-error: true
+
+      - name: Run cleaner
+        run: python cleaner/cleaner_main.py
+        continue-on-error: true
+
+      - name: Feature engineering (validate matrix)
+        run: python model/feature_engineering.py
+        continue-on-error: true
+
+      - name: Train model
+        run: python model/train_model.py
+        continue-on-error: true
+
+      # Uncomment to push updated data + model artifacts (requires permissions: write + secrets).
+      # - name: Commit results
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   run: |
+      #     git config user.name "github-actions"
+      #     git config user.email "github-actions@github.com"
+      #     git add data config/discovered_portal_url.json model/model_artifacts
+      #     git diff --staged --quiet || (git commit -m "chore: annual MAHACET FE data refresh" && git push)

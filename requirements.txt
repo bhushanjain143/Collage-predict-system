@@ -1,0 +1,16 @@
+openpyxl>=3.1.0
+flask>=3.0.0
+
+# Maharashtra FE dataset + prediction UI
+requests>=2.31.0
+beautifulsoup4>=4.12.0
+lxml>=5.0.0
+pandas>=2.1.0
+scikit-learn>=1.3.0
+streamlit>=1.32.0
+
+# Optional: stronger regressors (prediction_engine falls back to RandomForest if missing)
+xgboost>=2.0.0
+
+# Optional: JS-rendered portal pages
+# selenium>=4.15.0

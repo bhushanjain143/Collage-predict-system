@@ -1,0 +1,10 @@
+{
+  "description": "Template: add official scholarship / TFWS / fee waiver notices with URLs and short eligibility notes.",
+  "sources": [
+    {
+      "title": "Example — replace with official CET Cell / DTE notice title",
+      "url": "https://fe2025.mahacet.org/StaticPages/HomePage",
+      "eligibility_summary": "Replace with eligibility bullets from the official PDF."
+    }
+  ]
+}

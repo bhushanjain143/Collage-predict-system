@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-label="ExplainAI">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0b1929"/>
+      <stop offset="55%" style="stop-color:#162640"/>
+      <stop offset="100%" style="stop-color:#0b1929"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="70%" cy="20%" r="50%">
+      <stop offset="0%" style="stop-color:#e8601c;stop-opacity:0.35"/>
+      <stop offset="100%" style="stop-color:#e8601c;stop-opacity:0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="url(#glow)"/>
+  <text x="80" y="320" fill="#ffffff" font-family="Georgia,serif" font-size="72" font-weight="700">Explain<tspan fill="#ef7c3a" font-style="italic">AI</tspan></text>
+  <text x="80" y="400" fill="rgba(255,255,255,0.75)" font-family="system-ui,sans-serif" font-size="32">MHT-CET college &amp; scholarship tools</text>
+</svg>

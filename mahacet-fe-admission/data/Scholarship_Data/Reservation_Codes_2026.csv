@@ -1,0 +1,17 @@
+﻿code,cap_examples,notes
+OPEN,"GOPEN, LOPEN",General / open category patterns
+SC,"GSC, LSC, …",Scheduled Caste — subcodes per brochure
+ST,"GST, LST, …",Scheduled Tribe
+VJ,"GVJ, …",Vimukta Jati / DT(A) per state rules
+NT-A,"GNTA, …",Nomadic Tribe A
+NT-B,"GNTB, …",Nomadic Tribe B
+NT-C,"GNTC, …",Nomadic Tribe C
+NT-D,"GNTD, …",Nomadic Tribe D
+OBC,"GOBC, LOBC, …",Other Backward Classes
+SBC,"GSBC, …",Special Backward Class (if applicable)
+EWS,"EWS, …",Economically Weaker Section
+EBC,…,Economically Backward Class (if applicable)
+TFWS,TFWS,Tuition Fee Waiver Scheme
+MI,MI-*,Minority institute / minority seat patterns
+DEF,"DEF*, …",Defence subcategories
+PWD,"PWD*, …",Persons with disability — subcategories per brochure

@@ -1,0 +1,21 @@
+{
+  "feature_columns": [
+    "student_percentile",
+    "student_category",
+    "preferred_branch",
+    "CAP_Round",
+    "Quota_Type",
+    "college_location_district",
+    "historical_cutoff_mean_3yr",
+    "historical_cutoff_std_3yr",
+    "seat_availability_ratio",
+    "vacancy_flag"
+  ],
+  "target_interpretation": "Binary classifier; positive-class predict_proba is exposed as admission_probability (0..1).",
+  "cv_accuracy_mean": 0.825,
+  "cv_auc_mean": 0.95,
+  "cv_folds_used": 5,
+  "cv_folds_requested": 5,
+  "holdout_accuracy": 1.0,
+  "holdout_auc": 1.0
+}

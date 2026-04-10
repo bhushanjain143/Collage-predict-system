@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="en-IN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0b1929">
+    <meta name="description" id="meta-description" content="MHT-CET college predictor and scholarship finder for Maharashtra engineering admissions. Cutoff-based suggestions; not affiliated with CET Cell.">
+    <meta name="robots" content="index, follow">
+    <meta name="author" content="ExplainAI">
+    <title>ExplainAI — MHT-CET College Prediction System</title>
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="ExplainAI — MHT-CET College &amp; Scholarship Tools">
+    <meta property="og:description" content="Cutoff-based MHT-CET college ideas and scholarship matching for Maharashtra. Verify on official CET Cell and MahaDBT portals.">
+    <meta property="og:locale" content="en_IN">
+    <meta property="og:image" content="images/og-cover.svg">
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="ExplainAI — MHT-CET College &amp; Scholarship Tools">
+    <meta name="twitter:description" content="Cutoff-based MHT-CET college ideas and scholarship matching for Maharashtra.">
+    <meta name="twitter:image" content="images/og-cover.svg">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "WebApplication",
+          "name": "ExplainAI",
+          "description": "MHT-CET college predictor and scholarship finder for Maharashtra engineering admissions using published cutoffs.",
+          "applicationCategory": "EducationalApplication",
+          "operatingSystem": "Web",
+          "inLanguage": "en-IN",
+          "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" }
+        },
+        {
+          "@type": "Organization",
+          "name": "ExplainAI",
+          "description": "Student tools for MHT-CET counselling preparation and scholarships."
+        }
+      ]
+    }
+    </script>
+    <link rel="icon" type="image/svg+xml" href="images/og-cover.svg">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+    <!-- External CSS: base + shell polish -->
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="shell.css">
+</head>
+<body>
+
+<a class="skip-link" href="#main-content">Skip to main content</a>
+
+<!-- ==================== NAVIGATION ==================== -->
+<header class="site-header" role="banner">
+<nav aria-label="Primary navigation">
+    <a class="nav-logo" href="#" onclick="showPage('home'); return false;" aria-label="ExplainAI home">
+        <span class="logo-text">Explain<span class="logo-ai">AI</span></span>
+    </a>
+    <button type="button" class="menu-toggle" id="menuToggle" aria-expanded="false" aria-controls="navLinks" aria-label="Open menu">☰</button>
+    <ul class="nav-links" id="navLinks">
+        <li><a href="#" onclick="showPage('home'); return false;">Home</a></li>
+        <li><a href="#" onclick="showPage('counseling'); return false;">College Counselor</a></li>
+        <li><a href="#" onclick="showPage('scholarship'); return false;">Scholarships</a></li>
+        <li><a href="#" onclick="showPage('dashboard'); return false;">Dashboard</a></li>
+        <li><a class="nav-cta" id="navAuthBtn" href="#" onclick="handleNavAuth(); return false;">Sign In</a></li>
+    </ul>
+</nav>
+</header>
+
+<main id="main-content" class="site-main" tabindex="-1" role="main">
+
+<!-- ==================== HOME PAGE (simplified hero) ==================== -->
+<div id="page-home" class="page">
+  <section class="simple-hero hero-pro" aria-labelledby="home-hero-title">
+    <div class="simple-hero-overlay"></div>
+    <div class="simple-hero-content">
+      <div class="simple-logo">Explain<span>AI</span></div>
+      <h1 id="home-hero-title" class="simple-title">MHT-CET College Predictor</h1>
+      <p class="simple-subtitle">Cutoff-based college ideas and a scholarship matcher — verify everything on official portals.</p>
+      <div class="simple-buttons">
+        <button type="button" class="simple-btn-primary" onclick="showPage('counseling')">
+           Get College Predictions
+        </button>
+        <button type="button" class="simple-btn-secondary" onclick="showPage('scholarship')">
+          Scholarship Finder
+        </button>
+      </div>
+    </div>
+  </section>
+  <section class="home-value-strip" aria-label="Product highlights">
+    <div class="home-value-strip-inner">
+      <div class="home-value-item">
+        <div class="home-value-icon" aria-hidden="true">%</div>
+        <div class="home-value-text"><strong>Cutoff-aligned</strong><span>Suggestions use published closing percentiles and your category — not opaque scoring.</span></div>
+      </div>
+      <div class="home-value-item">
+        <div class="home-value-icon" aria-hidden="true">MH</div>
+        <div class="home-value-text"><strong>Maharashtra-first</strong><span>Branches, cities, and college types mapped to how CAP counselling is actually browsed.</span></div>
+      </div>
+      <div class="home-value-item">
+        <div class="home-value-icon" aria-hidden="true">₹</div>
+        <div class="home-value-text"><strong>Scholarship hints</strong><span>Eligibility-style prompts to explore MahaDBT and central schemes — always confirm on portals.</span></div>
+      </div>
+    </div>
+  </section>
+  <section class="home-different" id="how-we-differ" aria-labelledby="home-different-title">
+    <div class="home-different-inner">
+      <h2 id="home-different-title" class="home-different-title">How this is different from other predictors</h2>
+      <ul class="home-different-list">
+        <li><strong>Transparent logic.</strong> We compare your percentile to published closing cutoffs (with category / seat-type rules) — not a black-box “guarantee”.</li>
+        <li><strong>Maharashtra-first.</strong> Built around MHT-CET, branches, cities, and college types students actually use in CAP counselling.</li>
+        <li><strong>Counselling + scholarships.</strong> College suggestions and scholarship hints in one small app; always confirm on <abbr title="State Common Entrance Test Cell">CET Cell</abbr>, MahaDBT, and NSP.</li>
+        <li><strong>No substitute for authorities.</strong> Lists are indicative only; final allotment and fees are decided by the competent authority and colleges.</li>
+      </ul>
+    </div>
+  </section>
+</div>
+
+<!-- ==================== COUNSELING PAGE ==================== -->
+<div id="page-counseling" class="page">
+
+    <!-- Page Header -->
+    <div class="cc-page-header">
+        <div class="cc-header-inner">
+            <div class="cc-header-icon">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+            </div>
+            <div>
+                <h1 class="cc-page-title">College Counselor</h1>
+            </div>
+        </div>
+    </div>
+
+    <!-- Form Container -->
+    <div class="cc-form-wrap">
+        <div class="cc-form-card">
+
+            <!-- ── STEP 1: Score ── -->
+            <div class="cc-step-header">
+                <div class="cc-step-num">1</div>
+                <div>
+                    <div class="cc-step-title">Your MHT-CET Score</div>
+                    <div class="cc-step-sub">Enter your MHT-CET percentile</div>
+                </div>
+            </div>
+
+            <div class="cc-score-row">
+                <div class="cc-field">
+                    <label class="cc-label" for="percentile">Percentile</label>
+                    <input class="cc-input" type="number" id="percentile" placeholder="e.g. 85.50" min="0" max="100" step="0.01" required />
+                    <div class="cc-error" id="percentileError"></div>
+                </div>
+            </div>
+
+            <div class="cc-two-col">
+                <div class="cc-field">
+                    <label class="cc-label" for="category">Reservation Category</label>
+                    <select class="cc-select" id="category" required>
+                        <option value="OPEN">OPEN (General)</option>
+                        <option value="OBC">OBC</option>
+                        <option value="SC">SC</option>
+                        <option value="ST">ST</option>
+                        <option value="EWS">EWS / SEBC</option>
+                        <option value="VJNT">VJ / NT</option>
+                    </select>
+                </div>
+                <div class="cc-field">
+                    <label class="cc-label" for="counselingGender">Gender</label>
+                    <select class="cc-select" id="counselingGender" required>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="cc-divider"></div>
+
+            <!-- ── STEP 2: Preferences ── -->
+            <div class="cc-step-header">
+                <div class="cc-step-num">2</div>
+                <div>
+                    <div class="cc-step-title">Preferences </div>
+                </div>
+            </div>
+
+            <!-- Preferred City -->
+            <div class="cc-field">
+                <label class="cc-label" for="city">
+                    Preferred City
+                </label>
+                <select class="cc-select" id="city">
+                    <option value=""> All Maharashtra</option>
+                    <option value="Pune">Pune</option>
+                    <option value="Mumbai">Mumbai</option>
+                    <option value="Navi Mumbai">Navi Mumbai</option>
+                    <option value="Nagpur">Nagpur</option>
+                    <option value="Nashik">Nashik</option>
+                    <option value="Aurangabad">Aurangabad (Chhatrapati Sambhajinagar)</option>
+                    <option value="Kolhapur">Kolhapur</option>
+                    <option value="Amravati">Amravati</option>
+                    <option value="Solapur">Solapur</option>
+                    <option value="Jalgaon">Jalgaon</option>
+                    <option value="Sangli">Sangli</option>
+                    <option value="Satara">Satara</option>
+                    <option value="Latur">Latur</option>
+                    <option value="Nanded">Nanded</option>
+                    <option value="Ahmednagar">Ahmednagar</option>
+                    <option value="Raigad">Raigad</option>
+                    <option value="Thane">Thane</option>
+                    <option value="Dhule">Dhule</option>
+                    <option value="Wardha">Wardha</option>
+                    <option value="Shirpur">Shirpur</option>
+                    <option value="Nandurbar">Nandurbar</option>
+                </select>
+            </div>
+
+            <!-- Preferred Branches -->
+            <div class="cc-field">
+                <div class="cc-label-row">
+                    <label class="cc-label">Preferred Branches</label>
+                    <div class="cc-chip-actions">
+                        <button type="button" class="cc-chip-action-btn" onclick="selectAllChips('branch-chips')">Select All</button>
+                        <button type="button" class="cc-chip-action-btn cc-chip-action-clear" onclick="clearAllChips('branch-chips')">Clear</button>
+                    </div>
+                </div>
+                <div class="cc-chip-grid" id="branch-chips">
+                    <!-- ── Computer & IT ── -->
+                    <div class="chip" data-branches="Computer Engineering,Computer Engineering (Software Engineering),Computer Engineering (Regional Language)" tabindex="0" role="button" onclick="toggleChip(this)" onkeydown="handleChipKey(event, this)">
+                        <span class="cc-chip-icon"></span> Computer Engineering
+                    </div>
+                    <div class="chip" data-branches="Information Technology,Computer Science and Information Technology" tabindex="0" role="button" onclick="toggleChip(this)" onkeydown="handleChipKey(event, this)">
+                        <span class="cc-chip-icon"></span> Information Technology
+                    </div>
+                    <div class="chip" data-branches="Computer Science and Engineering,Computer Science,Computer Science and Business Systems,Computer Science and Design,Computer Science and Engineering (IoT)" tabindex="0" role="button" onclick="toggleChip(this)" onkeydown="handleChipKey(event, this)">
+                        <span class="cc-chip-icon"></span> Computer Science
+                    </div>
+                    <!-- ── AI / Data Science ── -->
+                    <div class="chip" data-branches="Artificial Intelligence (AI) and Data Science,Artificial Intelligence and Data Science,Artificial Intelligence and Machine Learning,Artificial Intelligence,Data Science,Computer Science and Engineering (Artificial Intelligence and Data Science),Computer Science and Engineering (Artificial Intelligence),Computer Science and Engineering(Artificial Intelligence and Machine Learning),Computer Science and Engineering(Data Science),Robotics and Artificial Intelligence" tabindex="0" role="button" onclick="toggleChip(this)" onkeydown="handleChipKey(event, this)">
+                        <span class="cc-chip-icon"></span> AI &amp; Data Science
+                    </div>
+                    <!-- ── Cyber Security / IoT ── -->
+                    <div class="chip" data-branches="Cyber Security,Computer Science and Engineering (Cyber Security),Computer Science and Engineering(Cyber Security),Computer Science and Engineering (Internet of Things and Cyber Security Including Block Chain,Industrial IoT" tabindex="0" role="button" onclick="toggleChip(this)" onkeydown="handleChipKey(event, this)">
+                        <span class="cc-chip-icon"></span> Cyber Security &amp; IoT
+                    </div>
+                    <!-- ── Electronics ── -->
+                    <div class="chip" data-branches="Electronics and Telecommunication Engg,Electronics & Telecommunication Engineering,Electronics and Communication Engineering,Electronics and Communication (Advanced Communication Technology),Electronics and Communication(Advanced Communication Technology)" tabindex="0" role="button" onclick="toggleChip(this)" onkeydown="handleChipKey(event, this)">
+                        <span class="cc-chip-icon"></span> Electronics &amp; TC
+                    </div>
+                    <div class="chip" data-branches="Electronics Engineering,Electronics Engineering ( VLSI Design and Technology),Electronics and Computer Engineering,Electronics and Computer Science,VLSI" tabindex="0" role="button" onclick="toggleChip(this)" onkeydown="handleChipKey(event, this)">
+                        <span class="cc-chip-icon"></span> Electronics Engineering
+                    </div>
+                    <!-- ── Electrical ── -->
+                    <div class="chip" data-branches="Electrical Engineering,Electrical Engg[Electronics and Power],Electrical and Electronics Engineering,Electrical, Electronics and Power,Electrical and Computer Engineering" tabindex="0" role="button" onclick="toggleChip(this)" onkeydown="handleChipKey(event, this)">
+                        <span class="cc-chip-icon"></span> Electrical Engineering
+                    </div>
+                    <!-- ── Mechanical ── -->
+                    <div class="chip" data-branches="Mechanical Engineering,Mechanical and Mechatronics Engineering (Additive Manufacturing),Mechanical & Automation Engineering,Mechanical and Automation Engineering,Mechatronics Engineering,Mechanical Engineering Automobile" tabindex="0" role="button" onclick="toggleChip(this)" onkeydown="handleChipKey(event, this)">
+                        <span class="cc-chip-icon"></span> Mechanical Engineering
+                    </div>
+                    <!-- ── Robotics / Automation ── -->
+                    <div class="chip" data-branches="Robotics and Automation,Automation and Robotics,Robotics and Artificial Intelligence" tabindex="0" role="button" onclick="toggleChip(this)" onkeydown="handleChipKey(event, this)">
+                        <span class="cc-chip-icon"></span> Robotics &amp; Automation
+                    </div>
+                    <!-- ── Civil ── -->
+                    <div class="chip" data-branches="Civil Engineering,Civil Engineering (Structural Engineering),Civil and infrastructure Engineering,Structural Engineering" tabindex="0" role="button" onclick="toggleChip(this)" onkeydown="handleChipKey(event, this)">
+                        <span class="cc-chip-icon"></span> Civil Engineering
+                    </div>
+                    <!-- ── Chemical / Bio ── -->
+                    <div class="chip" data-branches="Chemical Engineering,Pharmaceutical and Fine Chemical Technology,Petro Chemical Engineering" tabindex="0" role="button" onclick="toggleChip(this)" onkeydown="handleChipKey(event, this)">
+                        <span class="cc-chip-icon"></span> Chemical Engineering
+                    </div>
+                  
+                    <!-- ── Production / Instrumentation ── -->
+                    <div class="chip" data-branches="Instrumentation Engineering,Instrumentation and Control Engineering" tabindex="0" role="button" onclick="toggleChip(this)" onkeydown="handleChipKey(event, this)">
+                        <span class="cc-chip-icon"></span> Instrumentation
+                    </div>
+                    <div class="chip" data-branches="Production Engineering,Production Engineering[Sandwich],Automobile Engineering" tabindex="0" role="button" onclick="toggleChip(this)" onkeydown="handleChipKey(event, this)">
+                        <span class="cc-chip-icon"></span> Production &amp; Automobile
+                    </div>
+                    <!-- ── Food / Textile / Polymer ── -->
+                    <div class="chip" data-branches="Food Technology,Food Engineering,Food Engineering and Technology,Food Technology And Management,Textile Technology,Textile Engineering / Technology,Fibres and Textile Processing Technology,Plastic and Polymer Engineering,Polymer Engineering and Technology,Printing and Packing Technology,Surface Coating Technology,Oil and Paints Technology,Paper and Pulp Technology,Man Made Textile Technology,Textile Chemistry" tabindex="0" role="button" onclick="toggleChip(this)" onkeydown="handleChipKey(event, this)">
+                        <span class="cc-chip-icon"></span> Food / Textile / Polymer
+                    </div>
+                </div>
+            </div>
+
+            <!-- College Type -->
+            <div class="cc-field">
+                <div class="cc-label-row">
+                    <label class="cc-label">College Type</label>
+                    <div class="cc-chip-actions">
+                        <button type="button" class="cc-chip-action-btn" onclick="selectAllChips('college-type-chips')">Select All</button>
+                        <button type="button" class="cc-chip-action-btn cc-chip-action-clear" onclick="clearAllChips('college-type-chips')">Clear</button>
+
+                    </div>
+                </div>
+                <div class="cc-chip-grid cc-chip-grid-type" id="college-type-chips">
+                    <div class="chip selected" data-type="Government" tabindex="0" role="button" onclick="toggleChip(this)" onkeydown="handleChipKey(event, this)">
+                         Government
+                    </div>
+                    <div class="chip selected" data-type="Government-Aided" tabindex="0" role="button" onclick="toggleChip(this)" onkeydown="handleChipKey(event, this)">
+                         Government-Aided
+                    </div>
+                     <div class="chip selected" data-type="University" tabindex="0" role="button" onclick="toggleChip(this)" onkeydown="handleChipKey(event, this)">
+                         University
+                    </div>
+                    
+                    <div class="chip selected" data-type="Private Autonomous" tabindex="0" role="button" onclick="toggleChip(this)" onkeydown="handleChipKey(event, this)">
+                         Private Autonomous
+                    </div>
+                    <div class="chip selected" data-type="Private" tabindex="0" role="button" onclick="toggleChip(this)" onkeydown="handleChipKey(event, this)">
+                         Private
+                    </div>
+                    <div class="chip" data-type="Deemed University" tabindex="0" role="button" onclick="toggleChip(this)" onkeydown="handleChipKey(event, this)">
+                         Deemed University
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submit -->
+            <div class="cc-submit-row">
+                <button class="cc-submit-btn" id="counselingSubmit" onclick="handleCounselingSubmit(event)">
+                    Get College Recommendations
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== COUNSELING RESULTS PAGE ==================== -->
+<div id="page-results-counseling" class="page">
+
+    <!-- Results Header -->
+    <div class="res-header">
+        <div class="res-header-inner">
+            <div class="res-header-left">
+                <!-- Score summary pills -->
+                <div class="res-profile-card" id="resProfileCard">
+                    <div class="rpc-item">
+                        <span class="rpc-label">Percentile</span>
+                        <span class="rpc-value" id="rpcPctVal">—</span>
+                    </div>
+                    <div class="rpc-item">
+                        <span class="rpc-label">Category</span>
+                        <span class="rpc-value" id="rpcCatVal">—</span>
+                    </div>
+                    <div class="rpc-item">
+                        <span class="rpc-label">City</span>
+                        <span class="rpc-value" id="rpcCityVal">—</span>
+                    </div>
+                </div>
+                <h1 class="res-count-title" id="resultsCount">Finding colleges…</h1>
+                <!-- Chance summary pills -->
+                <div class="res-chance-summary" id="resChanceSummary" style="display:none">
+                    <div class="rcs-pill rcs-high" onclick="filterResults(document.querySelector('[data-filter=high]'),'high')" style="cursor:pointer">
+                        <span class="rcs-dot"></span><span id="rcs-high-n">0</span> High Chance
+                    </div>
+                    <div class="rcs-pill rcs-med" onclick="filterResults(document.querySelector('[data-filter=medium]'),'medium')" style="cursor:pointer">
+                        <span class="rcs-dot"></span><span id="rcs-med-n">0</span> Medium Chance
+                    </div>
+                    <div class="rcs-pill rcs-low" onclick="filterResults(document.querySelector('[data-filter=low]'),'low')" style="cursor:pointer">
+                        <span class="rcs-dot"></span><span id="rcs-low-n">0</span> Low Chance
+                    </div>
+                </div>
+            </div>
+            <button class="res-back-btn" onclick="showPage('counseling')">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                Modify Search
+            </button>
+        </div>
+    </div>
+
+    <div class="results-wrap">
+
+        
+        <!-- Filter relaxed notice -->
+        <div class="res-filter-note" id="resFilterNote" style="display:none"></div>
+
+        <!-- Filter bar -->
+        <div class="res-filter-bar">
+            <div class="res-filter-chips" id="resultFilterChips">
+                <button class="rfc rfc-active" data-filter="all" onclick="filterResults(this,'all')">
+                    All &nbsp;<span class="rfc-count" id="fc-all">0</span>
+                </button>
+                <button class="rfc" data-filter="high" onclick="filterResults(this,'high')">
+                    <span class="rfc-dot" style="background:#16a34a"></span>High Chance &nbsp;<span class="rfc-count" id="fc-high">0</span>
+                </button>
+                <button class="rfc" data-filter="medium" onclick="filterResults(this,'medium')">
+                    <span class="rfc-dot" style="background:#d97706"></span>Medium Chance &nbsp;<span class="rfc-count" id="fc-med">0</span>
+                </button>
+                <button class="rfc" data-filter="low" onclick="filterResults(this,'low')">
+                    <span class="rfc-dot" style="background:#dc2626"></span>Low Chance &nbsp;<span class="rfc-count" id="fc-low">0</span>
+                </button>
+            </div>
+            <div class="res-showing" id="resShowing"></div>
+            <button class="res-download-btn" id="resDownloadBtn" onclick="downloadCollegeList()" style="display:none">
+                Download List
+            </button>
+        </div>
+
+        <!-- Results cards grid -->
+        <div class="results-grid" id="resultsGrid"></div>
+
+        <!-- Empty state -->
+        <div class="res-empty" id="resEmpty" style="display:none">
+            <p class="res-empty-title">No Colleges Found</p>
+            <p class="res-empty-sub">Try selecting more branches or college types, or remove the city filter.</p>
+            <button class="cc-submit-btn" onclick="showPage('counseling')" style="max-width:220px;margin:20px auto 0;display:flex">
+                Modify Search
+            </button>
+        </div>
+
+        <!-- Scholarship nudge -->
+        <div class="res-scholar-banner" id="resScholarBanner" style="display:none">
+            <div class="res-scholar-left">
+                <div class="res-scholar-label"> Next Step</div>
+                <div class="res-scholar-title">Check scholarships you may qualify for</div>
+                <div class="res-scholar-sub">Based on your category — you may get full tuition coverage through NSP or MahaDBT.</div>
+            </div>
+            <button class="btn-primary" onclick="showPage('scholarship')">Find Scholarships </button>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== SCHOLARSHIP PAGE ==================== -->
+<div id="page-scholarship" class="page">
+    <div class="page-hero">
+        <h1>Scholarship Finder</h1>
+    </div>
+
+    <div class="form-section">
+        <div class="form-card">
+            <div class="form-section-title">Your Profile</div>
+            <div class="form-row">
+                <div class="field">
+                    <label for="scholarCategory">Reservation Category</label>
+                    <select id="scholarCategory" required>
+                        <option value="OPEN">OPEN</option>
+                        <option value="OBC">OBC</option>
+                        <option value="SC">SC</option>
+                        <option value="ST">ST</option>
+                        <option value="EWS">EWS</option>
+                        <option value="VJNT">VJNT</option>
+                        <option value="SBC">SBC</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label for="scholarIncome">Annual Family Income</label>
+                    <input type="number" id="scholarIncome" placeholder="e.g. 350000" min="0" required />
+                    <div class="error-message" id="incomeError"></div>
+                </div>
+            </div>
+            <div class="form-row triple">
+                <div class="field">
+                    <label for="scholarGender">Gender</label>
+                    <select id="scholarGender">
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label for="scholarDomicile">Domicile</label>
+                    <select id="scholarDomicile">
+                        <option value="maharashtra">Born in Maharashtra</option>
+                        <option value="maharashtra15">15+ Years Residence in MH</option>
+                        <option value="other">Other State</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label for="scholarDisability">Disability Status</label>
+                    <select id="scholarDisability">
+                        <option value="None">None</option>
+                        <option value="40%+ Disability">40%+ Disability</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-row triple">
+                <div class="field">
+                    <label for="scholarPercentage">12th Grade Percentage</label>
+                    <input type="number" id="scholarPercentage" placeholder="e.g. 82" min="0" max="100" step="0.01" required />
+                    <div class="error-message" id="percentageError"></div>
+                </div>
+                <div class="field">
+                    <label for="scholarMinority">Minority Community</label>
+                    <select id="scholarMinority">
+                        <option value="None">None / Not Applicable</option>
+                        <option value="Muslim">Muslim</option>
+                        <option value="Christian">Christian</option>
+                        <option value="Buddhist">Buddhist (Neo-Buddhist)</option>
+                        <option value="Sikh">Sikh</option>
+                        <option value="Parsi">Parsi</option>
+                        <option value="Jain">Jain</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label for="scholarYear">Current Year of Study</label>
+                    <select id="scholarYear" required>
+                        <option value="1">1st Year</option>
+                        <option value="2">2nd Year</option>
+                        <option value="3">3rd Year</option>
+                        <option value="4">4th Year</option>
+                    </select>
+                </div>
+            </div>
+            <button class="submit-btn" id="scholarshipSubmit" onclick="handleScholarshipSubmit(event)">Find My Scholarships</button>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== SCHOLARSHIP RESULTS PAGE ==================== -->
+<div id="page-results-scholarship" class="page">
+    <div class="res-header">
+        <div class="res-header-inner">
+            <div class="res-header-left">
+                <h1 class="res-count-title" id="scholarshipResultsTitle">Scholarships Found For You</h1>
+                <p id="scholarshipMeta" style="color:rgba(255,255,255,0.55);font-size:14px;margin-top:6px"></p>
+            </div>
+            <button class="res-back-btn" onclick="showPage('scholarship')">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                Modify Search
+            </button>
+        </div>
+    </div>
+    <div class="scholarship-results">
+        <div id="scholarshipSummaryBanner" style="display:none; align-items:center; gap:12px; margin-bottom:24px; padding:14px 18px; background:#ecfdf5; border-radius:10px; border:1px solid #6ee7b7;">
+            <span style="font-size:20px"></span>
+            <div id="scholarshipSummaryText" style="font-size:14px; color:#065f46; font-weight:500"></div>
+        </div>
+        <div id="scholarshipCardsContainer"></div>
+        <div id="scholarshipNotEligibleSection" style="display:none; margin-top:32px;">
+            <div style="font-size:13px; color:rgba(255,255,255,0.4); text-transform:uppercase; letter-spacing:1px; margin-bottom:16px;">Not Eligible (reasons shown)</div>
+            <div id="scholarshipNotEligibleCards"></div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== LOGIN PAGE ==================== -->
+<div id="page-login" class="page">
+    <div class="auth-center-wrap">
+        <div class="auth-card">
+            <div class="auth-card-logo">
+                <span class="auth-logo-text">Explain<span>AI</span></span>
+            </div>
+            <h2 class="auth-card-title">Welcome back </h2>
+            <p class="auth-card-sub">Sign in to continue to ExplainAI</p>
+
+            <!-- Green banner: shown after successful registration -->
+            <div id="loginSuccessBanner" class="auth-success-banner" style="display:none"></div>
+            <!-- Blue hint: shown when user was redirected from a protected page -->
+            <div id="loginRedirectHint" class="auth-redirect-hint" style="display:none"></div>
+            <!-- Legacy success div kept for backend compat -->
+            <div id="loginSuccess" class="auth-success-msg" style="display:none"></div>
+
+            <form id="loginForm" onsubmit="handleLogin(event)" novalidate>
+                <div class="afield">
+                    <label for="loginEmail">Email Address</label>
+                    <input type="email" id="loginEmail" placeholder="you@example.com" autocomplete="email" />
+                    <div class="afield-err" id="loginEmailErr"></div>
+                </div>
+                <div class="afield">
+                    <label for="loginPassword">Password</label>
+                    <div class="afield-pw">
+                        <input type="password" id="loginPassword" placeholder="Enter your password" autocomplete="current-password" />
+                        <button type="button" class="afield-eye" onclick="toggleAuthPassword('loginPassword', this)" tabindex="-1" aria-label="Show password">
+                            <img src="images/eye-show.svg" width="20" height="20" alt="Show password" class="eye-icon" />
+                        </button>
+                    </div>
+                    <div class="afield-err" id="loginPasswordErr"></div>
+                </div>
+                <!-- Terms & Conditions -->
+                <div class="afield-terms">
+                    <input type="checkbox" id="loginTerms" />
+                    <label for="loginTerms" onclick="document.getElementById('loginTerms').checked = !document.getElementById('loginTerms').checked; document.getElementById('loginTermsErr').textContent = '';">I agree to the <a class="auth-link" href="#">Terms &amp; Conditions</a> and <a class="auth-link" href="#">Privacy Policy</a></label>
+                </div>
+                <div class="afield-err" id="loginTermsErr"></div>
+
+                <div id="loginError" class="auth-error-msg"></div>
+                <button class="auth-btn-primary" type="submit" id="loginSubmit">
+                    <span>Sign In</span>
+                </button>
+
+                <!-- Reset Password button -->
+                <button type="button" class="login-reset-pw-btn" onclick="showPage('forgot-password')">
+                    Reset Password
+                </button>
+            </form>
+            <div class="auth-card-footer">
+                Don't have an account? <a onclick="showPage('register')" class="auth-link">Create account </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== RESET PASSWORD PAGE ==================== -->
+<div id="page-forgot-password" class="page">
+    <div class="auth-center-wrap">
+        <div class="auth-card">
+            <div class="auth-card-logo">
+                <span class="auth-logo-text">Explain<span>AI</span></span>
+            </div>
+            <h2 class="auth-card-title">Reset Password</h2>
+            <p class="auth-card-sub">Enter your registered email and choose a new password.</p>
+
+            <!-- Success banner -->
+            <div id="rpSuccessBanner" class="auth-success-banner" style="display:none;"></div>
+            <!-- User not found banner -->
+            <div id="rpNotFoundBanner" class="rp-notfound-banner" style="display:none;">
+                User does not exist. Please register first.
+                <a onclick="showPage('register')" class="auth-link rp-register-link">Register here</a>
+            </div>
+
+            <form id="resetPasswordForm" onsubmit="handleResetPassword(event)" novalidate>
+                <div class="afield">
+                    <label for="rpEmail">Email Address <span class="afield-required">*</span></label>
+                    <input type="email" id="rpEmail" placeholder="you@example.com" autocomplete="email" />
+                    <div class="afield-err" id="rpEmailErr"></div>
+                </div>
+                <div class="afield">
+                    <label for="rpNewPassword">New Password <span class="afield-required">*</span></label>
+                    <div class="afield-pw">
+                        <input type="password" id="rpNewPassword" placeholder="Min 8 characters" autocomplete="new-password" />
+                        <button type="button" class="afield-eye" onclick="toggleAuthPassword('rpNewPassword', this)" tabindex="-1" aria-label="Show password">
+                            <img src="images/eye-show.svg" width="20" height="20" alt="Show password" class="eye-icon" />
+                        </button>
+                    </div>
+                    <div class="afield-err" id="rpNewPasswordErr"></div>
+                </div>
+                <div class="afield">
+                    <label for="rpConfirmPassword">Confirm New Password <span class="afield-required">*</span></label>
+                    <div class="afield-pw">
+                        <input type="password" id="rpConfirmPassword" placeholder="Repeat new password" autocomplete="new-password" />
+                        <button type="button" class="afield-eye" onclick="toggleAuthPassword('rpConfirmPassword', this)" tabindex="-1" aria-label="Show password">
+                            <img src="images/eye-show.svg" width="20" height="20" alt="Show password" class="eye-icon" />
+                        </button>
+                    </div>
+                    <div class="afield-err" id="rpConfirmPasswordErr"></div>
+                </div>
+                <div id="rpError" class="auth-error-msg"></div>
+                <button class="auth-btn-primary" type="submit" id="rpSubmitBtn">
+                    <span>Reset Password</span>
+                </button>
+            </form>
+
+            <button type="button" class="login-reset-pw-btn" onclick="showPage('login')" style="margin-top:10px;">
+                Back to Login
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== REGISTER PAGE ==================== -->
+<div id="page-register" class="page">
+    <div class="auth-center-wrap">
+        <div class="auth-card auth-card-wide">
+            <div class="auth-card-logo">
+                <span class="auth-logo-text">Explain<span>AI</span></span>
+            </div>
+            <h2 class="auth-card-title">Create your account</h2>
+            <form id="registerForm" onsubmit="handleRegister(event)" novalidate>
+                <div class="afield">
+                    <label for="regName">Full Name <span class="afield-required">*</span></label>
+                    <input type="text" id="regName" placeholder="Your full name" autocomplete="name" />
+                    <div class="afield-err" id="regNameErr"></div>
+                </div>
+                <div class="afield">
+                    <label for="regEmail">Email Address <span class="afield-required">*</span></label>
+                    <input type="email" id="regEmail" placeholder="you@example.com" autocomplete="email" />
+                    <div class="afield-err" id="regEmailErr"></div>
+                </div>
+                <div class="afield">
+                    <label for="regPhone">Phone Number </label>
+                    <input type="tel" id="regPhone" placeholder="10-digit mobile number" autocomplete="tel" />
+                    <div class="afield-err" id="regPhoneErr"></div>
+                </div>
+                <div class="afields-row">
+                    <div class="afield">
+                        <label for="regPassword">Password <span class="afield-required">*</span></label>
+                        <div class="afield-pw">
+                            <input type="password" id="regPassword" placeholder="Min 8 chars, letters + numbers" autocomplete="new-password" />
+                            <button type="button" class="afield-eye" onclick="toggleAuthPassword('regPassword', this)" tabindex="-1" aria-label="Show password">
+                                <img src="images/eye-show.svg" width="20" height="20" alt="Show password" class="eye-icon" />
+                            </button>
+                        </div>
+                        <div class="afield-err" id="regPasswordErr"></div>
+                    </div>
+                    <div class="afield">
+                        <label for="regConfirmPassword">Confirm Password <span class="afield-required">*</span></label>
+                        <div class="afield-pw">
+                            <input type="password" id="regConfirmPassword" placeholder="Repeat password" autocomplete="new-password" />
+                            <button type="button" class="afield-eye" onclick="toggleAuthPassword('regConfirmPassword', this)" tabindex="-1" aria-label="Show password">
+                                <img src="images/eye-show.svg" width="20" height="20" alt="Show password" class="eye-icon" />
+                            </button>
+                        </div>
+                        <div class="afield-err" id="regConfirmErr"></div>
+                    </div>
+                </div>
+                <div id="registerError" class="auth-error-msg"></div>
+                <button class="auth-btn-primary" type="submit" id="registerSubmit">
+                    <span>Create  Account</span>
+                </button>
+            </form>
+            <div class="auth-card-footer">
+                Already have an account? <a onclick="showPage('login')" class="auth-link">Sign in </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== DASHBOARD PAGE ==================== -->
+<div id="page-dashboard" class="page">
+    <div class="dash-wrap">
+
+        <!-- Welcome Banner -->
+        <div class="dash-welcome-banner">
+            <div class="dash-welcome-inner">
+                <div class="dash-welcome-left">
+                    <div class="dash-avatar" id="dashAvatar">S</div>
+                    <div class="dash-welcome-text">
+                        <p class="dash-welcome-label">Welcome,</p>
+                        <h2 class="dash-greeting-name" id="dashName">Student</h2>
+                    </div>
+                </div>
+                <button class="dash-signout-btn-v2" onclick="logout()">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                    Sign Out
+                </button>
+            </div>
+        </div>
+
+        <!-- Dashboard Header -->
+        <div class="dash-header dash-header-v2">
+            <div class="dash-header-top">
+                <div style="display:none">placeholder</div>
+            </div>
+
+            <!-- Live Stats Row -->
+            <div class="dash-stats-v2">
+                <div class="dash-stat-v2 dash-stat-blue">
+                    <div class="dsv2-body">
+                        <div class="dash-stat-num" id="dashAnalysedCount">—</div>
+                        <div class="dash-stat-label">Colleges Analysed</div>
+                    </div>
+                </div>
+                <div class="dash-stat-v2 dash-stat-green">
+                    <div class="dsv2-body">
+                        <div class="dash-stat-num" id="dashSavedCount">0</div>
+                        <div class="dash-stat-label">Colleges Saved</div>
+                    </div>
+                </div>
+                <div class="dash-stat-v2 dash-stat-blue">
+                    <div class="dsv2-body">
+                        <div class="dash-stat-num" id="dashScholarAnalysedCount">—</div>
+                        <div class="dash-stat-label">Scholarships Eligible</div>
+                    </div>
+                </div>
+                <div class="dash-stat-v2 dash-stat-green">
+                    <div class="dsv2-body">
+                        <div class="dash-stat-num" id="dashScholarSavedCount">0</div>
+                        <div class="dash-stat-label">Scholarships Saved</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Action Cards -->
+        
+        <div class="dash-modules dash-modules-v2">
+            <div class="module-card module-card-primary" onclick="showPage('counseling')">
+                <h3>College Counselor</h3>
+                <div class="module-card-action">Start Counseling</div>
+                
+            </div>
+            <div class="module-card module-card-scholar" onclick="showPage('scholarship')">
+                <h3>Scholarship Finder</h3>
+                <div class="module-card-action">Find Scholarships</div>
+        
+            </div>
+        </div>
+
+        
+
+        <!-- Two column: Colleges Activity + Scholarships Activity -->
+        <div class="dash-two-col">
+            <!-- Colleges Saved -->
+            <div class="dash-panel">
+                <div class="dash-panel-title">
+                    <span>Colleges Saved</span>
+                </div>
+                <div class="dash-activity-list" id="dashCollegeActivityList">
+                    <div class="dai-empty">No colleges saved yet — start exploring!</div>
+                </div>
+            </div>
+
+            <!-- Scholarships Saved -->
+            <div class="dash-panel">
+                <div class="dash-panel-title">
+                    <span>Scholarships Saved</span>
+                </div>
+                <div class="dash-activity-list" id="dashScholarActivityList">
+                    <div class="dai-empty">No scholarships saved yet — find scholarships!</div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+</main>
+
+<footer class="site-footer" role="contentinfo">
+    <div class="site-footer-inner">
+        <div class="site-footer-brand">Explain<span>AI</span></div>
+        <p>ExplainAI helps you explore MHT-CET engineering options using published cutoff data and draft scholarship matches. It is <strong>not</strong> affiliated with CET Cell, DTE, or any college. All allotments, fees, and final rules are decided by the competent authority.</p>
+        <p>Always verify cutoffs, documents, and deadlines on official Maharashtra CET / CAP notices, MahaDBT, and NSP before you act.</p>
+        <div class="site-footer-meta">
+            <span>MHT-CET · Maharashtra</span>
+            <span id="site-footer-year">© 2026 ExplainAI</span>
+        </div>
+    </div>
+</footer>
+
+<!-- ==================== MODAL (Why? explanations) ==================== -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)" role="presentation">
+    <div class="modal" id="modal-content" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <button type="button" class="modal-close" onclick="closeAllModals()" aria-label="Close explanation">✕</button>
+        <p class="modal-kicker" id="modal-kicker">How we chose this</p>
+        <h3 id="modal-title">Why this recommendation?</h3>
+        <p class="modal-college" id="modal-subtitle"></p>
+        <div class="why-reasons" id="modal-reasons"></div>
+    </div>
+</div>
+
+<!-- External JavaScript (jsPDF loads on demand when exporting PDF) -->
+<script src="script.js" defer></script>
+</body>
+</html>

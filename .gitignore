@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+*.so
+.venv/
+venv/
+ENV/
+
+# Local venv accidentally created under scripts/
+scripts/.venv/
+
+# Portal local venv
+india_engineering_ai_portal/.venv/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/
+
+# Env secrets (if you add later)
+.env
+.env.local
+
+# Large binaries from FE portal (URLs still recorded in metadata/manifest.json). Remove these lines to commit PDFs.
+Maharashtra-FE-Admission-Dataset/**/*.pdf
+Maharashtra-FE-Admission-Dataset/**/*.zip
+mahacet-fe-admission/data/**/*.pdf
+mahacet-fe-admission/data/**/*.zip
+
+# Large archives / CAP PDFs under nested ExplainAI copy (keep source in repo without binaries)
+New folder/**/*.zip
+New folder/**/*.pdf

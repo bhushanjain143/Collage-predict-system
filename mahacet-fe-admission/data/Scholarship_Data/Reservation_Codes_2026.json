@@ -1,0 +1,86 @@
+{
+  "year": 2026,
+  "disclaimer": "Reference only — not legal advice.",
+  "codes": [
+    {
+      "code": "OPEN",
+      "cap_examples": "GOPEN, LOPEN",
+      "notes": "General / open category patterns"
+    },
+    {
+      "code": "SC",
+      "cap_examples": "GSC, LSC, …",
+      "notes": "Scheduled Caste — subcodes per brochure"
+    },
+    {
+      "code": "ST",
+      "cap_examples": "GST, LST, …",
+      "notes": "Scheduled Tribe"
+    },
+    {
+      "code": "VJ",
+      "cap_examples": "GVJ, …",
+      "notes": "Vimukta Jati / DT(A) per state rules"
+    },
+    {
+      "code": "NT-A",
+      "cap_examples": "GNTA, …",
+      "notes": "Nomadic Tribe A"
+    },
+    {
+      "code": "NT-B",
+      "cap_examples": "GNTB, …",
+      "notes": "Nomadic Tribe B"
+    },
+    {
+      "code": "NT-C",
+      "cap_examples": "GNTC, …",
+      "notes": "Nomadic Tribe C"
+    },
+    {
+      "code": "NT-D",
+      "cap_examples": "GNTD, …",
+      "notes": "Nomadic Tribe D"
+    },
+    {
+      "code": "OBC",
+      "cap_examples": "GOBC, LOBC, …",
+      "notes": "Other Backward Classes"
+    },
+    {
+      "code": "SBC",
+      "cap_examples": "GSBC, …",
+      "notes": "Special Backward Class (if applicable)"
+    },
+    {
+      "code": "EWS",
+      "cap_examples": "EWS, …",
+      "notes": "Economically Weaker Section"
+    },
+    {
+      "code": "EBC",
+      "cap_examples": "…",
+      "notes": "Economically Backward Class (if applicable)"
+    },
+    {
+      "code": "TFWS",
+      "cap_examples": "TFWS",
+      "notes": "Tuition Fee Waiver Scheme"
+    },
+    {
+      "code": "MI",
+      "cap_examples": "MI-*",
+      "notes": "Minority institute / minority seat patterns"
+    },
+    {
+      "code": "DEF",
+      "cap_examples": "DEF*, …",
+      "notes": "Defence subcategories"
+    },
+    {
+      "code": "PWD",
+      "cap_examples": "PWD*, …",
+      "notes": "Persons with disability — subcategories per brochure"
+    }
+  ]
+}

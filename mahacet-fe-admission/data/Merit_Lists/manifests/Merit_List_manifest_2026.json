@@ -1,0 +1,134 @@
+[
+  {
+    "year": 2026,
+    "url": "http://fe2025.mahacet.org/MeritListFiles/Final/FE2025_PCMMH_MeritList_Final.pdf",
+    "link_text": "Maharashtra State Merit List",
+    "quota": "MH",
+    "list_type": "Final",
+    "relative_path": "Merit_Lists/MH_State/Final_FE2025_PCMMH_MeritList_Final.pdf",
+    "canonical_csv_name": "Merit_List_MH_Final_2026.csv",
+    "bytes": 59399509,
+    "status": "downloaded"
+  },
+  {
+    "year": 2026,
+    "url": "http://fe2025.mahacet.org/MeritListFiles/Final/FE2025_PCMAI_MeritList_Final.pdf",
+    "link_text": "All India Merit List",
+    "quota": "AI",
+    "list_type": "Final",
+    "relative_path": "Merit_Lists/All_India/Final_FE2025_PCMAI_MeritList_Final.pdf",
+    "canonical_csv_name": "Merit_List_AI_Final_2026.csv",
+    "bytes": 68187531,
+    "status": "downloaded"
+  },
+  {
+    "year": 2026,
+    "url": "http://fe2025.mahacet.org/MeritListFiles/Final/FE2025_PCMJK_MeritList_Final.pdf",
+    "link_text": "JK Merit List",
+    "quota": "JK",
+    "list_type": "Final",
+    "relative_path": "Merit_Lists/JK_Candidates/Final_FE2025_PCMJK_MeritList_Final.pdf",
+    "canonical_csv_name": "Merit_List_JK_Final_2026.csv",
+    "bytes": 571483,
+    "status": "downloaded"
+  },
+  {
+    "year": 2026,
+    "url": "http://fe2025.mahacet.org/MeritListFiles/Final/FE2025_PCBMH_MeritList_Final.pdf",
+    "link_text": "Maharashtra State Merit List",
+    "quota": "MH",
+    "list_type": "Final",
+    "relative_path": "Merit_Lists/MH_State/Final_FE2025_PCBMH_MeritList_Final.pdf",
+    "canonical_csv_name": "Merit_List_MH_Final_2026.csv",
+    "bytes": 60213131,
+    "status": "downloaded"
+  },
+  {
+    "year": 2026,
+    "url": "http://fe2025.mahacet.org/MeritListFiles/Final/FE2025_PCBAI_MeritList_Final.pdf",
+    "link_text": "All India Merit List",
+    "quota": "AI",
+    "list_type": "Final",
+    "relative_path": "Merit_Lists/All_India/Final_FE2025_PCBAI_MeritList_Final.pdf",
+    "canonical_csv_name": "Merit_List_AI_Final_2026.csv",
+    "bytes": 69321724,
+    "status": "downloaded"
+  },
+  {
+    "year": 2026,
+    "url": "http://fe2025.mahacet.org/MeritListFiles/Final/FE2025_PCBJK_MeritList_Final.pdf",
+    "link_text": "JK Merit List",
+    "quota": "JK",
+    "list_type": "Final",
+    "relative_path": "Merit_Lists/JK_Candidates/Final_FE2025_PCBJK_MeritList_Final.pdf",
+    "canonical_csv_name": "Merit_List_JK_Final_2026.csv",
+    "bytes": 569436,
+    "status": "downloaded"
+  },
+  {
+    "year": 2026,
+    "url": "http://fe2025.mahacet.org/MeritListFiles/Provisional/FE2025_PCMMH_MeritList_Provisional.pdf",
+    "link_text": "Maharashtra State Merit List",
+    "quota": "MH",
+    "list_type": "Provisional",
+    "relative_path": "Merit_Lists/MH_State/Provisional_FE2025_PCMMH_MeritList_Provisional.pdf",
+    "canonical_csv_name": "Merit_List_MH_Provisional_2026.csv",
+    "bytes": 59286609,
+    "status": "downloaded"
+  },
+  {
+    "year": 2026,
+    "url": "http://fe2025.mahacet.org/MeritListFiles/Provisional/FE2025_PCMAI_MeritList_Provisional.pdf",
+    "link_text": "All India Merit List",
+    "quota": "AI",
+    "list_type": "Provisional",
+    "relative_path": "Merit_Lists/All_India/Provisional_FE2025_PCMAI_MeritList_Provisional.pdf",
+    "canonical_csv_name": "Merit_List_AI_Provisional_2026.csv",
+    "bytes": 68456322,
+    "status": "downloaded"
+  },
+  {
+    "year": 2026,
+    "url": "http://fe2025.mahacet.org/MeritListFiles/Provisional/FE2025_PCMJK_MeritList_Provisional.pdf",
+    "link_text": "JK Merit List",
+    "quota": "JK",
+    "list_type": "Provisional",
+    "relative_path": "Merit_Lists/JK_Candidates/Provisional_FE2025_PCMJK_MeritList_Provisional.pdf",
+    "canonical_csv_name": "Merit_List_JK_Provisional_2026.csv",
+    "bytes": 571800,
+    "status": "downloaded"
+  },
+  {
+    "year": 2026,
+    "url": "http://fe2025.mahacet.org/MeritListFiles/Provisional/FE2025_PCBMH_MeritList_Provisional.pdf",
+    "link_text": "Maharashtra State Merit List",
+    "quota": "MH",
+    "list_type": "Provisional",
+    "relative_path": "Merit_Lists/MH_State/Provisional_FE2025_PCBMH_MeritList_Provisional.pdf",
+    "canonical_csv_name": "Merit_List_MH_Provisional_2026.csv",
+    "bytes": 61186645,
+    "status": "downloaded"
+  },
+  {
+    "year": 2026,
+    "url": "http://fe2025.mahacet.org/MeritListFiles/Provisional/FE2025_PCBAI_MeritList_Provisional.pdf",
+    "link_text": "All India Merit List",
+    "quota": "AI",
+    "list_type": "Provisional",
+    "relative_path": "Merit_Lists/All_India/Provisional_FE2025_PCBAI_MeritList_Provisional.pdf",
+    "canonical_csv_name": "Merit_List_AI_Provisional_2026.csv",
+    "bytes": 69581160,
+    "status": "downloaded"
+  },
+  {
+    "year": 2026,
+    "url": "http://fe2025.mahacet.org/MeritListFiles/Provisional/FE2025_PCBJK_MeritList_Provisional.pdf",
+    "link_text": "JK Merit List",
+    "quota": "JK",
+    "list_type": "Provisional",
+    "relative_path": "Merit_Lists/JK_Candidates/Provisional_FE2025_PCBJK_MeritList_Provisional.pdf",
+    "canonical_csv_name": "Merit_List_JK_Provisional_2026.csv",
+    "bytes": 572972,
+    "status": "downloaded"
+  }
+]

@@ -1,0 +1,38 @@
+Maharashtra — Engineering / Technology CAP: where round-wise cutoffs live
+===========================================================================
+
+Official publisher: State Common Entrance Test Cell, Maharashtra
+  https://cetcell.mahacet.org/
+
+Each admission cycle uses its own portal folder (examples — URLs change yearly):
+  - DSE 2025-26 style: https://dse2025.mahacet.org.in/
+  - FE 2024-25 archives often under: https://fe2024.mahacet.org/ (or current year sibling)
+
+What to download per year
+--------------------------
+For the academic year you care about (e.g. 2025-26), look for PDFs named like:
+  - CAP-I / CAP1 cutoff (engineering)
+  - CAP-II, CAP-III, … (same pattern through CAP V if published)
+
+Typical filename fragments (not guaranteed for every year):
+  - ...CAP1_CutOff...pdf
+  - ...CAP2_CutOff...pdf
+  ... through CAP5
+
+Inside each PDF, locate your institute (e.g. Vishwakarma Institute of Information
+Technology — “VIIT”, Pune), programme (branch), seat category code (e.g. GOPEN,
+LOPEN, …), and the **closing merit / percentile** published for that round.
+
+Why this repo only ships a TEMPLATE
+-----------------------------------
+Cutoff PDFs are not stable machine-readable open data. Year, exact path, and
+column layout change. The CSV/XLSX built by scripts/maha_cap_round_template.py
+gives you **rows for 5 years × 5 CAP rounds** so you can **paste** official values
+and paste the **PDF URL** you used into the source column.
+
+VIIT naming
+-----------
+“VIIT” usually refers to **Vishwakarma Institute of Information Technology**,
+Pune (affiliated to Savitribai Phule Pune University). Always match spelling and
+**institute / choice code** to the seat matrix for that year — do not rely on
+abbreviations alone.

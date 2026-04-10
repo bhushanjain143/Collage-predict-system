@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>India Engineering AI Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,600;0,9..40,700;1,9..40,400&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+</head>
+<body>
+  <div class="bg-grid"></div>
+  <header class="site-header">
+    <div class="logo">
+      <span class="logo-mark">◇</span>
+      <div>
+        <strong>India Engineering</strong>
+        <span class="logo-sub">AI Admission Portal</span>
+      </div>
+    </div>
+    <nav class="nav">
+      <a href="#landscape">Landscape</a>
+      <a href="#explore">Explore</a>
+      <a href="#predict">Predict</a>
+      <a href="#recommend">Recommend</a>
+      <a href="#scholarships">Scholarships</a>
+      <a href="#cap">CAP</a>
+      <a href="#compare">Compare</a>
+      <a href="#chat">Chat</a>
+    </nav>
+    <a class="btn btn-ghost" href="https://josaa.nic.in/" target="_blank" rel="noopener">JoSAA ↗</a>
+  </header>
+
+  <main>
+    <section class="hero">
+      <p class="eyebrow">Spec from AI_ML_College_Portal_v2 · Demo stack Flask + vanilla JS</p>
+      <h1>Smarter <em>shortlists</em> for engineering admissions.</h1>
+      <p class="lead">
+        Rule-based prediction, similarity recommendations, scholarship hints, CAP guidance,
+        and college comparison — with a clean dataset slice for IIT / NIT / IIIT / top private &amp; state colleges.
+      </p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#recommend">Get recommendations</a>
+        <a class="btn btn-outline" href="#explore">Browse colleges</a>
+      </div>
+      <p class="fineprint">Fees &amp; cutoffs are <strong>indicative</strong> only. Always confirm on official portals.</p>
+    </section>
+
+    <section id="landscape" class="section">
+      <h2>India engineering landscape</h2>
+      <p class="section-desc">National scale snapshot (approximate counts from your product brief).</p>
+      <div class="stat-grid">
+        <article class="stat-card"><span class="stat-val">{{ stats.total_engineering }}</span><span class="stat-label">Total colleges</span></article>
+        <article class="stat-card"><span class="stat-val">{{ stats.private }}</span><span class="stat-label">Private</span></article>
+        <article class="stat-card"><span class="stat-val">{{ stats.government }}</span><span class="stat-label">Govt / aided</span></article>
+        <article class="stat-card accent"><span class="stat-val">{{ stats.iits }}</span><span class="stat-label">IITs</span></article>
+        <article class="stat-card accent"><span class="stat-val">{{ stats.nits }}</span><span class="stat-label">NITs</span></article>
+        <article class="stat-card accent"><span class="stat-val">{{ stats.iiits }}</span><span class="stat-label">IIITs</span></article>
+      </div>
+    </section>
+
+    <section id="explore" class="section">
+      <h2>Explore dataset</h2>
+      <p class="section-desc">Live filter over the in-memory sample (subset of your markdown tables).</p>
+      <div class="panel filters">
+        <input type="search" id="q" placeholder="Search name, city, branch…" autocomplete="off" />
+        <select id="ftype">
+          <option value="all">All types</option>
+          <option value="IIT">IIT</option>
+          <option value="NIT">NIT</option>
+          <option value="IIIT">IIIT</option>
+          <option value="Private">Private</option>
+          <option value="Govt">Government</option>
+        </select>
+        <select id="fstate">
+          <option value="all">All states</option>
+        </select>
+        <select id="fbranch">
+          <option value="all">All branches</option>
+          <option value="CSE">CSE / CS</option>
+          <option value="IT">IT</option>
+          <option value="Electronics">Electronics</option>
+        </select>
+      </div>
+      <div id="grid" class="card-grid"></div>
+    </section>
+
+    <section id="predict" class="section two-col">
+      <div>
+        <h2>Admission chance</h2>
+        <p class="section-desc">Rule-based demo (logistic-style output without trained weights). Uses your percentile vs indicative cutoff.</p>
+        <form id="predict-form" class="panel form">
+          <label>JEE Main percentile (or best available)</label>
+          <input type="number" name="jee_percentile" min="0" max="100" step="0.01" value="97.5" required />
+          <label>MHT-CET percentile (optional)</label>
+          <input type="number" name="mht_percentile" min="0" max="100" step="0.01" placeholder="—" />
+          <label>Category</label>
+          <select name="category">
+            <option>General</option>
+            <option>OBC</option>
+            <option>EWS</option>
+            <option>SC</option>
+            <option>ST</option>
+            <option>PwD</option>
+          </select>
+          <label>College row</label>
+          <select id="predict-college" name="college_id"></select>
+          <button class="btn btn-primary" type="submit">Estimate chance</button>
+        </form>
+      </div>
+      <div id="predict-out" class="panel out-panel"><p class="muted">Submit the form to see High / Medium / Low with a short rationale.</p></div>
+    </section>
+
+    <section id="recommend" class="section">
+      <h2>Top recommendations</h2>
+      <p class="section-desc">Weighted cosine match on placement, package, fees, and tier — returns up to 25 rows.</p>
+      <form id="rec-form" class="panel form grid-form">
+        <div>
+          <label>JEE / best percentile (optional filter)</label>
+          <input type="number" name="jee_percentile" min="0" max="100" step="0.01" value="96" />
+        </div>
+        <div>
+          <label>Max fee / year (₹)</label>
+          <input type="number" name="max_fee_per_year" value="400000" step="1000" />
+        </div>
+        <div>
+          <label>Branch contains</label>
+          <input type="text" name="branch_pref" value="CSE" />
+        </div>
+        <div>
+          <label>State contains</label>
+          <input type="text" name="state_pref" placeholder="e.g. maharashtra" />
+        </div>
+        <div>
+          <label>College type</label>
+          <select name="college_type_pref">
+            <option value="any">Any</option>
+            <option value="IIT">IIT</option>
+            <option value="NIT">NIT</option>
+            <option value="IIIT">IIIT</option>
+            <option value="Private">Private</option>
+            <option value="Govt">Govt</option>
+          </select>
+        </div>
+        <div class="sliders">
+          <label>Weights (placement / package / affordability)</label>
+          <input type="hidden" name="weight_placement" id="wpl" value="0.4" />
+          <input type="hidden" name="weight_package" id="wpk" value="0.35" />
+          <input type="hidden" name="weight_affordability" id="wfe" value="0.25" />
+          <input type="range" id="rwpl" min="0" max="100" value="40" /> Placement
+          <input type="range" id="rwpk" min="0" max="100" value="35" /> Package
+          <input type="range" id="rwfe" min="0" max="100" value="25" /> Affordability
+        </div>
+        <button class="btn btn-primary" type="submit">Rank colleges</button>
+      </form>
+      <div id="rec-out" class="card-grid"></div>
+    </section>
+
+    <section id="scholarships" class="section two-col">
+      <div>
+        <h2>Scholarship matcher</h2>
+        <p class="section-desc">Starter rule engine — extend with your own policy JSON later.</p>
+        <form id="sch-form" class="panel form">
+          <label>Category</label>
+          <select name="category"><option>General</option><option>SC</option><option>ST</option><option>OBC</option><option>EWS</option></select>
+          <label>Income band</label>
+          <select name="income_band">
+            <option value="above_8L">Above ₹8L / yr</option>
+            <option value="below_8l">Below ₹8L / yr</option>
+            <option value="below_2.5l">Below ₹2.5L / yr</option>
+          </select>
+          <label>Gender</label>
+          <select name="gender"><option value="any">Any</option><option value="female">Female</option><option value="male">Male</option></select>
+          <button class="btn btn-primary" type="submit">Suggest schemes</button>
+        </form>
+      </div>
+      <div id="sch-out" class="panel out-panel"></div>
+    </section>
+
+    <section id="cap" class="section two-col">
+      <div>
+        <h2>CAP round hint</h2>
+        <p class="section-desc">Maharashtra-style heuristic (not trained on historical allotments).</p>
+        <form id="cap-form" class="panel form">
+          <label>MHT-CET percentile</label>
+          <input type="number" name="mht_percentile" min="0" max="100" step="0.01" value="97" required />
+          <button class="btn btn-primary" type="submit">Get hint</button>
+        </form>
+      </div>
+      <div id="cap-out" class="panel out-panel"></div>
+    </section>
+
+    <section id="compare" class="section">
+      <h2>College comparison</h2>
+      <p class="section-desc">Select 2–4 cards in Explore (click to toggle), then compare.</p>
+      <button type="button" class="btn btn-primary" id="btn-compare">Compare selected</button>
+      <div id="compare-out" class="panel out-panel compare-table-wrap"></div>
+    </section>
+
+    <section id="chat" class="section">
+      <h2>Student assistant</h2>
+      <p class="section-desc">Keyword FAQ (demo). Swap for OpenAI / Rasa per your roadmap.</p>
+      <div class="chat-layout panel">
+        <div id="chat-log" class="chat-log"></div>
+        <form id="chat-form" class="chat-form">
+          <input type="text" id="chat-msg" placeholder="Ask about CAP, scholarships, documents…" autocomplete="off" />
+          <button class="btn btn-primary" type="submit">Send</button>
+        </form>
+      </div>
+    </section>
+
+    <section class="section sources">
+      <h2>Official sources</h2>
+      <ul class="link-list">
+        <li><a href="https://josaa.nic.in/" target="_blank" rel="noopener">JoSAA</a></li>
+        <li><a href="https://csab.nic.in/" target="_blank" rel="noopener">CSAB</a></li>
+        <li><a href="https://www.aicte-india.org/" target="_blank" rel="noopener">AICTE</a></li>
+        <li><a href="https://www.nirfindia.org/" target="_blank" rel="noopener">NIRF</a></li>
+        <li><a href="https://cetcell.mahacet.org/" target="_blank" rel="noopener">MHT-CET Cell</a></li>
+      </ul>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>Built for local demo · <code>python app.py</code> · Port 5050</p>
+  </footer>
+
+  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+# Production-friendly defaults for `streamlit run app/streamlit_app.py`
+[server]
+headless = true
+enableCORS = true
+enableXsrfProtection = true
+maxUploadSize = 50
+runOnSave = false
+
+[browser]
+gatherUsageStats = false
+
+[runner]
+fastReruns = true
+
+[logger]
+level = "warning"

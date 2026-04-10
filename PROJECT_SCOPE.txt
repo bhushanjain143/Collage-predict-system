@@ -1,0 +1,13 @@
+Project scope — Collage folder only
+=====================================
+
+All work for this college-admission / data tooling project lives under:
+
+  Collage\   (this repository root)
+
+Do not depend on paths outside this tree (e.g. Downloads). Place specs, CSVs,
+the Flask portal (`india_engineering_ai_portal\`), scripts, `data\`, `dist\`,
+and `reference\` here so backups and git remotes stay self-contained.
+
+Optional: copy `AI_ML_College_Portal_v2.md` into `docs\` if you want the product
+spec next to the code.

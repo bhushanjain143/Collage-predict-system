@@ -1,0 +1,11 @@
+Academic_Year,CAP_Round,Quota_Type,Institute_Code,Institute_Name,Program_Branch,Seat_Category_Code,District,Closing_Percentile,Notes,data_quality_flag
+2021-22,1,mh,00000,illustrative institute a (replace),computer science and engineering,open,pune,92.5,sample only,False
+2022-23,1,mh,00000,illustrative institute a (replace),computer science and engineering,open,pune,91.8,sample,False
+2023-24,1,mh,00000,illustrative institute a (replace),computer science and engineering,open,pune,91.0,sample,False
+2024-25,1,mh,00000,illustrative institute a (replace),computer science and engineering,open,pune,90.2,sample,False
+2025-26,1,mh,00000,illustrative institute a (replace),computer science and engineering,open,pune,89.5,sample,False
+2021-22,1,mh,00001,illustrative institute b (replace),mechanical engineering,open,nagpur,88.0,sample,False
+2022-23,1,mh,00001,illustrative institute b (replace),mechanical engineering,open,nagpur,87.2,sample,False
+2023-24,1,mh,00001,illustrative institute b (replace),mechanical engineering,open,nagpur,86.5,sample,False
+2024-25,1,mh,00001,illustrative institute b (replace),mechanical engineering,open,nagpur,85.9,sample,False
+2025-26,1,mh,00001,illustrative institute b (replace),mechanical engineering,open,nagpur,85.1,sample,False
