@@ -1,0 +1,197 @@
+/**
+ * ExplainAI — Bootstrap 5 layer + dark mode + responsive fixes
+ * Load after: bootstrap.min.css, (optional legacy style.css)
+ */
+
+:root,
+[data-bs-theme="light"] {
+    --ea-brand: #0d6efd;
+    --ea-brand-2: #0b1929;
+    --ea-accent: #fd7e14;
+    --ea-body-bg: #f4f6f9;
+    --ea-card-shadow: 0 0.35rem 1.2rem rgba(15, 23, 42, 0.08);
+    --ea-nav-h: 72px;
+}
+
+[data-bs-theme="dark"] {
+    --ea-body-bg: #0f172a;
+    --ea-card-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.45);
+    --ea-brand-2: #020617;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: "DM Sans", system-ui, -apple-system, sans-serif;
+    background-color: var(--ea-body-bg) !important;
+    transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+[data-bs-theme="dark"] body {
+    color: #e2e8f0;
+}
+
+/* Fixed navbar height for main offset */
+.site-header .navbar {
+    min-height: var(--ea-nav-h);
+    box-shadow: var(--ea-card-shadow);
+}
+
+.site-main {
+    padding-top: var(--ea-nav-h);
+    min-height: 100vh;
+}
+
+/* SPA pages — nav offset lives on .site-main; avoid double padding */
+.page {
+    display: none;
+    min-height: calc(100vh - var(--ea-nav-h));
+    padding-top: 0 !important;
+    animation: ea-fade 0.28s ease;
+}
+
+.page.active {
+    display: block;
+}
+
+@keyframes ea-fade {
+    from {
+        opacity: 0;
+        transform: translateY(4px);
+    }
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+/* Nav active state (works with Bootstrap .nav-link) */
+.nav-links .nav-link.active {
+    color: #fff !important;
+    font-weight: 600;
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 0.5rem;
+}
+
+[data-bs-theme="light"] .navbar-dark.bg-ea-nav {
+    background: linear-gradient(135deg, #0b1929 0%, #1e3a5f 100%) !important;
+}
+
+/* Hero (home) */
+.simple-hero.hero-pro {
+    min-height: clamp(380px, 72vh, 680px);
+    background-image:
+        radial-gradient(ellipse 100% 80% at 80% 10%, rgba(13, 110, 253, 0.12) 0%, transparent 50%),
+        radial-gradient(ellipse 90% 70% at 50% -15%, rgba(253, 126, 20, 0.2) 0%, transparent 55%),
+        linear-gradient(165deg, #0b1929 0%, #162640 45%, #0b1929 100%);
+}
+
+.simple-hero.hero-pro .simple-title {
+    font-family: "Playfair Display", Georgia, serif;
+}
+
+.simple-btn-primary,
+.simple-btn-secondary {
+    transition: transform 0.15s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.simple-btn-primary:hover,
+.simple-btn-secondary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 0.5rem 1.25rem rgba(0, 0, 0, 0.18);
+}
+
+/* Counseling / forms: prevent overflow */
+.cc-form-card,
+.cc-input,
+.cc-select,
+.result-card,
+.scholar-card,
+#counselorMessages,
+#aiInsightText {
+    word-break: break-word;
+    overflow-wrap: anywhere;
+}
+
+.cc-form-wrap {
+    max-width: 920px;
+    margin: 0 auto;
+}
+
+/* Result cards */
+.result-card {
+    transition: box-shadow 0.2s ease, transform 0.15s ease;
+}
+
+.result-card:hover {
+    box-shadow: 0 0.5rem 1.5rem rgba(15, 23, 42, 0.12);
+    transform: translateY(-2px);
+}
+
+[data-bs-theme="dark"] .result-card:hover {
+    box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.35);
+}
+
+/* Filter chips / RFC buttons */
+.rfc {
+    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+/* Modal overlay */
+#modal-overlay.open {
+    display: flex !important;
+}
+
+#modal-overlay {
+    backdrop-filter: blur(4px);
+}
+
+.modal {
+    max-height: min(88vh, 900px);
+    overflow-y: auto;
+}
+
+/* Dashboard chart box */
+.ea-chart-wrap {
+    position: relative;
+    height: 220px;
+    max-width: 100%;
+}
+
+@media (max-width: 576px) {
+    .ea-chart-wrap {
+        height: 200px;
+    }
+}
+
+/* Tables if any */
+.table-responsive {
+    border-radius: 0.5rem;
+}
+
+/* Alerts inline with legacy */
+.alert-ea {
+    border-radius: 0.5rem;
+}
+
+/* Scholarship banner */
+#scholarshipSummaryBanner {
+    border-radius: 0.5rem !important;
+}
+
+/* Footer */
+.site-footer {
+    transition: background 0.25s ease, color 0.25s ease;
+}
+
+[data-bs-theme="dark"] .site-footer {
+    background: #020617 !important;
+    color: #94a3b8;
+}
+
+/* Skip link */
+.skip-link:focus {
+    z-index: 2000;
+}

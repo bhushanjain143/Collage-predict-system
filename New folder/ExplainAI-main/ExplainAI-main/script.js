@@ -419,6 +419,9 @@ const API_BASE = (function () {
 /** Filled from GET /api/config — ai_enabled, data_year, etc. */
 var APP_SERVER_CONFIG = { ai_enabled: false, data_year: null, cutoff_rows_approx: 0 };
 
+/** Dashboard Chart.js instance */
+var _dashChart = null;
+
 async function refreshAppServerConfig() {
     try {
         var res = await fetch(API_BASE + '/api/config', { credentials: 'omit' });
@@ -1256,6 +1259,95 @@ function toggleSave(btn) { /* replaced by toggleLike/toggleDislike */ }
 
 function updateDashSavedCount() { updateDashboardStats(); }
 
+function initEaTheme() {
+    var saved = localStorage.getItem('ea-bs-theme');
+    var prefers = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    var mode = saved || (prefers ? 'dark' : 'light');
+    applyEaTheme(mode);
+    var btn = document.getElementById('themeToggle');
+    if (btn) {
+        btn.addEventListener('click', function () {
+            var cur = document.documentElement.getAttribute('data-bs-theme') === 'dark' ? 'dark' : 'light';
+            var next = cur === 'dark' ? 'light' : 'dark';
+            applyEaTheme(next);
+            try {
+                localStorage.setItem('ea-bs-theme', next);
+            } catch (e) { /* */ }
+            if (typeof refreshDashChart === 'function') {
+                refreshDashChart();
+            }
+        });
+    }
+}
+
+function applyEaTheme(mode) {
+    var dark = mode === 'dark';
+    document.documentElement.setAttribute('data-bs-theme', dark ? 'dark' : 'light');
+    var icon = document.getElementById('themeToggleIcon');
+    if (icon) {
+        icon.className = dark ? 'bi bi-sun-fill' : 'bi bi-moon-stars-fill';
+    }
+}
+
+function _parseDashStat(elId) {
+    var el = document.getElementById(elId);
+    if (!el) return 0;
+    var t = (el.textContent || '').trim();
+    if (t === '' || t === '\u2014' || t === '—') return 0;
+    var n = parseInt(t, 10);
+    return isNaN(n) ? 0 : n;
+}
+
+function refreshDashChart() {
+    var canvas = document.getElementById('dashStatsChart');
+    if (!canvas || typeof Chart === 'undefined') return;
+    var ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    var labels = ['Saved runs', 'Colleges analysed', 'Colleges saved', 'Scholarships matched', 'Scholarships saved'];
+    var data = [
+        _parseDashStat('dashPredictionRunsCount'),
+        _parseDashStat('dashAnalysedCount'),
+        _parseDashStat('dashSavedCount'),
+        _parseDashStat('dashScholarAnalysedCount'),
+        _parseDashStat('dashScholarSavedCount')
+    ];
+    var isDark = document.documentElement.getAttribute('data-bs-theme') === 'dark';
+    var gridColor = isDark ? 'rgba(148,163,184,.22)' : 'rgba(15,23,42,.08)';
+    var fontColor = isDark ? '#e2e8f0' : '#334155';
+    if (_dashChart) {
+        _dashChart.destroy();
+        _dashChart = null;
+    }
+    _dashChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Activity',
+                data: data,
+                borderRadius: 8,
+                backgroundColor: ['#6366f1', '#0ea5e9', '#22c55e', '#a855f7', '#f59e0b']
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                x: {
+                    ticks: { color: fontColor, maxRotation: 40, autoSkip: true, font: { size: 10 } },
+                    grid: { color: gridColor }
+                },
+                y: {
+                    beginAtZero: true,
+                    ticks: { color: fontColor, precision: 0, font: { size: 10 } },
+                    grid: { color: gridColor }
+                }
+            }
+        }
+    });
+}
+
 function updateDashboardStats() {
     var liked         = _getLiked();
     var disliked      = _getDisliked();
@@ -1282,6 +1374,7 @@ function updateDashboardStats() {
 
     // Render recent activity
     _renderActivity();
+    refreshDashChart();
 }
 
 function _renderActivity() {
@@ -1339,6 +1432,7 @@ async function loadSavedPredictionRuns() {
     if (!getCurrentUser() || !getCurrentUser().id) {
         listEl.innerHTML = '<div class="dai-empty">Sign in and use &quot;Save run&quot; on results to store a shortlist here.</div>';
         if (cntEl) cntEl.textContent = '0';
+        refreshDashChart();
         return;
     }
     try {
@@ -1347,6 +1441,7 @@ async function loadSavedPredictionRuns() {
         if (data.status !== 'success' || !data.predictions || !data.predictions.length) {
             listEl.innerHTML = '<div class="dai-empty">No saved runs yet — open results and click Save run.</div>';
             if (cntEl) cntEl.textContent = '0';
+            refreshDashChart();
             return;
         }
         if (cntEl) cntEl.textContent = String(data.predictions.length);
@@ -1364,6 +1459,7 @@ async function loadSavedPredictionRuns() {
         listEl.innerHTML = '<div class="dai-empty">Could not load saved runs (is the backend running?).</div>';
         if (cntEl) cntEl.textContent = '—';
     }
+    refreshDashChart();
 }
 
 function updateSaveRunButtonVisibility() {
@@ -1454,6 +1550,215 @@ async function requestAiInsight(task) {
     } catch (e) {
         meta.textContent = 'Error';
         txt.textContent = 'Could not reach the AI service. Check your connection and that the backend is running.';
+    }
+}
+
+async function requestCardBatchInsights() {
+    var grid = document.getElementById('resultsGrid');
+    var panel = document.getElementById('aiInsightPanel');
+    var meta = document.getElementById('aiInsightMeta');
+    var txt = document.getElementById('aiInsightText');
+    if (!grid || !panel || !txt) return;
+    var colleges = grid._all || [];
+    if (!colleges.length) {
+        alert('No colleges to analyse.');
+        return;
+    }
+    panel.style.display = 'block';
+    meta.textContent = 'Generating per-college insights…';
+    txt.textContent = '';
+    var body = {
+        percentile: parseFloat(sessionStorage.getItem('inputPercentile') || '0'),
+        category: sessionStorage.getItem('inputCategory') || '',
+        colleges: colleges.slice(0, 25).map(function (c) {
+            return {
+                college_name: c.college_name,
+                branch: c.branch,
+                chance: c.chance,
+                cutoff_percentile: c.cutoff_percentile,
+                city: c.city
+            };
+        })
+    };
+    try {
+        var res = await fetch(API_BASE + '/api/ai/card-insights', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body)
+        });
+        var data = await res.json();
+        var provider = data.provider ? ' · ' + data.provider : '';
+        meta.textContent = (data.status === 'ok' ? 'Per-college insights' : 'Insights') + provider;
+        txt.textContent = data.text || data.error || 'No text returned.';
+        try {
+            sessionStorage.setItem('explainai_last_ai_summary', txt.textContent);
+        } catch (e2) { /* quota */ }
+    } catch (e) {
+        meta.textContent = 'Error';
+        txt.textContent = 'Could not reach the AI service.';
+    }
+}
+
+function _getCounselorHistory() {
+    try {
+        var raw = sessionStorage.getItem('explainai_counselor_history');
+        var h = raw ? JSON.parse(raw) : [];
+        return Array.isArray(h) ? h : [];
+    } catch (e) {
+        return [];
+    }
+}
+
+function _appendCounselorTurn(role, content) {
+    var h = _getCounselorHistory();
+    h.push({ role: role, content: String(content || '') });
+    if (h.length > 24) {
+        h = h.slice(-24);
+    }
+    try {
+        sessionStorage.setItem('explainai_counselor_history', JSON.stringify(h));
+    } catch (e2) { /* quota */ }
+}
+
+function _renderCounselorMessages() {
+    var box = document.getElementById('counselorMessages');
+    if (!box) return;
+    var h = _getCounselorHistory();
+    if (!h.length) {
+        box.innerHTML = '<div style="opacity:.85;font-size:12px">Your conversation will appear here. Try a quick button or type a question.</div>';
+        return;
+    }
+    box.innerHTML = h.map(function (m) {
+        var isUser = m.role === 'user';
+        var bg = isUser ? 'rgba(255,255,255,.12)' : 'rgba(0,0,0,.12)';
+        var lab = isUser ? 'You' : 'Counselor';
+        var esc = String(m.content || '')
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/\n/g, '<br/>');
+        return '<div style="margin-bottom:10px;padding:8px 10px;border-radius:8px;background:' + bg + '">' +
+            '<div style="font-size:10px;opacity:.75;margin-bottom:4px">' + lab + '</div>' +
+            '<div style="font-size:13px">' + esc + '</div></div>';
+    }).join('');
+    box.scrollTop = box.scrollHeight;
+}
+
+function _counselorCollegePayload() {
+    var grid = document.getElementById('resultsGrid');
+    var colleges = (grid && grid._all) ? grid._all : [];
+    return colleges.slice(0, 12).map(function (c) {
+        return {
+            college_name: c.college_name,
+            branch: c.branch,
+            chance: c.chance,
+            cutoff_percentile: c.cutoff_percentile,
+            city: c.city
+        };
+    });
+}
+
+async function sendCounselorChat() {
+    var inp = document.getElementById('counselorInput');
+    if (!inp) return;
+    var q = (inp.value || '').trim();
+    if (!q) return;
+    inp.value = '';
+    await _runCounselorQuestion(q);
+}
+
+async function sendCounselorQuick(kind) {
+    var q = '';
+    if (kind === 'best_choice') {
+        q = 'In 5–8 lines, what is the single best choice for me from this list and why? End with whether the overall mix looks safe, moderate, or risky for CAP.';
+    } else if (kind === 'compare_top2') {
+        q = 'Compare only the first two colleges on my predicted list (by order shown). Cover placements (as trends, not exact numbers unless from data), branch value, location, and which option is relatively safer for me.';
+    } else if (kind === 'next_steps') {
+        q = 'What concrete CAP / counselling steps should I take in the next two weeks? Use a numbered list.';
+    } else {
+        return;
+    }
+    await _runCounselorQuestion(q);
+}
+
+async function _runCounselorQuestion(question) {
+    if (!APP_SERVER_CONFIG.ai_enabled) {
+        alert('AI is not configured on the server (add OPENAI_API_KEY or GEMINI_API_KEY).');
+        return;
+    }
+    var grid = document.getElementById('resultsGrid');
+    if (!grid || !grid._all || !grid._all.length) {
+        alert('No college list loaded.');
+        return;
+    }
+    var hist = _getCounselorHistory();
+    var body = {
+        question: question,
+        percentile: parseFloat(sessionStorage.getItem('inputPercentile') || '0'),
+        category: sessionStorage.getItem('inputCategory') || '',
+        city: sessionStorage.getItem('inputCity') || '',
+        colleges: _counselorCollegePayload(),
+        history: hist
+    };
+    try {
+        var res = await fetch(API_BASE + '/api/ai/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body)
+        });
+        var data = await res.json();
+        var text = data.text || data.error || 'No reply.';
+        _appendCounselorTurn('user', question);
+        _appendCounselorTurn('assistant', text);
+        _renderCounselorMessages();
+    } catch (e) {
+        alert('Could not reach the counselor API.');
+    }
+}
+
+function openGenericAdviceModal(title, plainBody) {
+    var kickerEl = document.getElementById('modal-kicker');
+    if (kickerEl) kickerEl.textContent = 'AI guidance';
+    document.getElementById('modal-title').textContent = title;
+    document.getElementById('modal-subtitle').textContent = 'Double-check every step on the official portal.';
+    var wrap = document.getElementById('modal-reasons');
+    wrap.innerHTML = '';
+    var pre = document.createElement('pre');
+    pre.style.whiteSpace = 'pre-wrap';
+    pre.style.fontFamily = 'inherit';
+    pre.style.fontSize = '13px';
+    pre.style.lineHeight = '1.5';
+    pre.style.margin = '0';
+    pre.textContent = plainBody;
+    wrap.appendChild(pre);
+    document.getElementById('modal-overlay').classList.add('open');
+}
+
+async function requestScholarshipApplyGuide(scholarId) {
+    if (!APP_SERVER_CONFIG.ai_enabled) {
+        alert('AI is not configured on the server.');
+        return;
+    }
+    var p = window._scholarApplyPayload && window._scholarApplyPayload[scholarId];
+    if (!p) {
+        alert('Scholarship data not found. Run the scholarship search again.');
+        return;
+    }
+    try {
+        var res = await fetch(API_BASE + '/api/ai/scholarship-guide', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                name: p.name,
+                portal_url: p.portal_url,
+                documents: p.documents || [],
+                category: p.category || ''
+            })
+        });
+        var data = await res.json();
+        openGenericAdviceModal('How to apply: ' + (p.name || 'Scholarship'), data.text || data.error || 'No text.');
+    } catch (e) {
+        alert('Could not reach the AI service.');
     }
 }
 
@@ -1598,11 +1903,14 @@ async function handleCounselingSubmit(e) {
     btn.innerHTML = '<span class="cc-spinner"></span> Searching colleges…';
 
     var aiPan = document.getElementById('aiInsightPanel');
+    var cPan = document.getElementById('counselorChatPanel');
     var exBar = document.getElementById('resToolbarExtras');
     if (aiPan) { aiPan.style.display = 'none'; }
+    if (cPan) { cPan.style.display = 'none'; }
     if (exBar) { exBar.style.display = 'none'; }
     var csi = document.getElementById('collegeSearchInput');
     if (csi) { csi.value = ''; }
+    try { sessionStorage.removeItem('explainai_counselor_history'); } catch (eClr) { }
 
     const finalPercentile = parseFloat(document.getElementById('percentile').value);
     sessionStorage.setItem('inputPercentile', finalPercentile);
@@ -1681,6 +1989,8 @@ function renderCollegeResults(colleges, filterNote, noResultsHint) {
         if (countEl) countEl.textContent = 'No Colleges Found';
         if (exBar) exBar.style.display = 'none';
         if (aiPan) aiPan.style.display = 'none';
+        var ccP0 = document.getElementById('counselorChatPanel');
+        if (ccP0) ccP0.style.display = 'none';
         if (emptyEl) {
             var msg = noResultsHint ||
                 'No colleges found for your filters. Try changing your branch, city, or college type.';
@@ -1712,12 +2022,17 @@ function renderCollegeResults(colleges, filterNote, noResultsHint) {
     grid._activeFilter = 'all';
 
     if (exBar) exBar.style.display = 'flex';
+    var cPan = document.getElementById('counselorChatPanel');
+    if (cPan) cPan.style.display = APP_SERVER_CONFIG.ai_enabled ? 'block' : 'none';
     var saveBtn = document.getElementById('btnSavePredictionRun');
-    var ai1 = document.getElementById('btnAiExplainList');
+    var aiCards = document.getElementById('btnAiCardInsights');
     var ai2 = document.getElementById('btnAiGuidance');
     if (saveBtn) saveBtn.style.display = getCurrentUser() && getCurrentUser().id ? '' : 'none';
-    if (ai1) ai1.style.display = APP_SERVER_CONFIG.ai_enabled ? '' : 'none';
+    if (aiCards) aiCards.style.display = APP_SERVER_CONFIG.ai_enabled ? '' : 'none';
     if (ai2) ai2.style.display = APP_SERVER_CONFIG.ai_enabled ? '' : 'none';
+    if (APP_SERVER_CONFIG.ai_enabled) {
+        _renderCounselorMessages();
+    }
 
     // Update all counts
     _setFilterCounts(colleges.length, allHigh.length, allMed.length, allLow.length);
@@ -2232,6 +2547,9 @@ function renderScholarshipResults(data, totalEligible, formData) {
         ' | ' + formData.gender + ' | ' + formData.percentage + '% in 12th' +
         ' | Year ' + formData.yearOfStudy;
 
+    window._lastScholarFormData = formData;
+    window._scholarApplyPayload = {};
+
     // Save visible count for dashboard stat
     localStorage.setItem(_userStorageKey('explainai_scholar_total'), visibleCount);
     updateDashboardStats();
@@ -2251,7 +2569,7 @@ function renderScholarshipResults(data, totalEligible, formData) {
     // Render cards (or appropriate empty state)
     document.getElementById('scholarshipCardsContainer').innerHTML =
         visibleCount > 0
-            ? visibleEligible.map(function(s) { return buildScholarshipCard(s, true); }).join('')
+            ? visibleEligible.map(function(s) { return buildScholarshipCard(s, true, formData); }).join('')
             : eligible.length > 0
                 ? '<p style="text-align:center; padding:40px 0; color:#555">You\'ve hidden all matching scholarships. Refresh to see them again.</p>'
                 : '<p style="text-align:center; padding:40px 0; color:#555">No scholarships match your profile.</p>';
@@ -2261,7 +2579,15 @@ function renderScholarshipResults(data, totalEligible, formData) {
     if (notEligSection) notEligSection.style.display = 'none';
 }
 
-function buildScholarshipCard(s, eligible) {
+function buildScholarshipCard(s, eligible, formData) {
+    formData = formData || {};
+    window._scholarApplyPayload = window._scholarApplyPayload || {};
+    window._scholarApplyPayload[s.id] = {
+        name: s.name || '',
+        portal_url: s.portal_url || '',
+        documents: s.documents || [],
+        category: formData.category || ''
+    };
     var deadlineTagClass = s.deadline_status === 'estimated' ? 'scholar-tag tag-estimated'
                          : s.deadline_status === 'urgent'    ? 'scholar-tag tag-red'
                          : s.deadline_status === 'open'      ? 'scholar-tag tag-green'
@@ -2308,6 +2634,10 @@ function buildScholarshipCard(s, eligible) {
             '</span></button>'
         : '';
 
+    var aiScholarBtn = (eligible && APP_SERVER_CONFIG.ai_enabled)
+        ? '<button type="button" class="res-download-btn" style="margin-top:8px;font-size:12px;padding:6px 12px" onclick="requestScholarshipApplyGuide(' + Number(s.id) + ')">AI: how to apply</button>'
+        : '';
+
     // First reason shown inline under tags — dark color so it's visible
     var reasonText = s.reasons && s.reasons.length > 0 ? s.reasons[0] : '';
     var sourceLabel = s.source === 'NSP' ? 'NSP' : s.source === 'MahaDBT' ? 'MH' : s.source;
@@ -2329,6 +2659,7 @@ function buildScholarshipCard(s, eligible) {
             (reasonText ? '<div style="font-size:12px;color:#555;margin-top:6px">' + reasonText + '</div>' : '') +
             docsHtml +
             whyBtnHtml +
+            aiScholarBtn +
             buildScholarshipActionBtns(s) +
         '</div>' +
         '<div class="scholar-amount">' +
@@ -2485,6 +2816,7 @@ function _updateScholarshipBanner() {
 
 // ---------- HAMBURGER MENU & INITIAL SETUP ----------
 document.addEventListener('DOMContentLoaded', function() {
+    initEaTheme();
     initSeoFromLocation();
     var collegeSearchInput = document.getElementById('collegeSearchInput');
     if (collegeSearchInput) {
@@ -2494,31 +2826,27 @@ document.addEventListener('DOMContentLoaded', function() {
             filterResults(btn, btn.dataset.filter || 'all');
         });
     }
+    var counselorInput = document.getElementById('counselorInput');
+    if (counselorInput) {
+        counselorInput.addEventListener('keydown', function (ev) {
+            if (ev.key === 'Enter') {
+                ev.preventDefault();
+                sendCounselorChat();
+            }
+        });
+    }
     const footerYear = document.getElementById('site-footer-year');
     if (footerYear) {
         footerYear.textContent = '\u00A9 ' + new Date().getFullYear() + ' ExplainAI';
     }
 
-    // Hamburger menu
-    const menuToggle = document.getElementById('menuToggle');
     const navLinks = document.getElementById('navLinks');
-
-    if (menuToggle && navLinks) {
-        menuToggle.addEventListener('click', () => {
-            navLinks.classList.toggle('open');
-            const open = navLinks.classList.contains('open');
-            menuToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
-            menuToggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
-        });
-    }
-
     if (navLinks) {
-        document.querySelectorAll('.nav-links a').forEach(link => {
-            link.addEventListener('click', () => {
-                navLinks.classList.remove('open');
-                if (menuToggle) {
-                    menuToggle.setAttribute('aria-expanded', 'false');
-                    menuToggle.setAttribute('aria-label', 'Open menu');
+        navLinks.querySelectorAll('a').forEach(function (link) {
+            link.addEventListener('click', function () {
+                if (typeof bootstrap !== 'undefined' && window.innerWidth < 992) {
+                    var inst = bootstrap.Collapse.getInstance(navLinks);
+                    if (inst) inst.hide();
                 }
             });
         });

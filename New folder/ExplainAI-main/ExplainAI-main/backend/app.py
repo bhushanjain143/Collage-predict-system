@@ -7,7 +7,13 @@ import json
 import bcrypt
 from datetime import datetime
 
-from llm_service import get_ai_public_config, run_llm_task
+from llm_service import (
+    get_ai_public_config,
+    run_batch_card_insights,
+    run_counselor_chat,
+    run_llm_task,
+    run_scholarship_apply_guide,
+)
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'explainai-stable-dev-key-2025')
@@ -322,6 +328,66 @@ def ai_explain():
     if compare_pair is not None and not isinstance(compare_pair, list):
         compare_pair = None
     out = run_llm_task(task, ctx, colleges, compare_pair)
+    return jsonify({
+        'status': out.get('status', 'ok'),
+        'text': out.get('text', ''),
+        'provider': out.get('provider'),
+        'error': out.get('error'),
+    })
+
+
+@app.route('/api/ai/chat', methods=['POST'])
+def ai_counselor_chat():
+    data = request.get_json(silent=True) or {}
+    percentile = data.get('percentile')
+    category = data.get('category')
+    city = data.get('city')
+    user_question = (data.get('question') or '').strip()
+    colleges = data.get('colleges')
+    history = data.get('history')
+    if not isinstance(colleges, list):
+        colleges = []
+    if not isinstance(history, list):
+        history = []
+    history = [h for h in history if isinstance(h, dict) and h.get('role') and h.get('content')]
+    out = run_counselor_chat(percentile, category, colleges, user_question, history, city=city)
+    return jsonify({
+        'status': out.get('status', 'ok'),
+        'text': out.get('text', ''),
+        'provider': out.get('provider'),
+        'error': out.get('error'),
+    })
+
+
+@app.route('/api/ai/card-insights', methods=['POST'])
+def ai_card_insights():
+    data = request.get_json(silent=True) or {}
+    percentile = data.get('percentile')
+    category = data.get('category')
+    colleges = data.get('colleges')
+    if not isinstance(colleges, list):
+        colleges = []
+    out = run_batch_card_insights(percentile, category, colleges)
+    return jsonify({
+        'status': out.get('status', 'ok'),
+        'text': out.get('text', ''),
+        'provider': out.get('provider'),
+        'error': out.get('error'),
+    })
+
+
+@app.route('/api/ai/scholarship-guide', methods=['POST'])
+def ai_scholarship_guide():
+    data = request.get_json(silent=True) or {}
+    name = (data.get('name') or '').strip()
+    if not name:
+        return jsonify({'status': 'error', 'error': 'name is required'}), 400
+    url = (data.get('portal_url') or data.get('url') or '').strip()
+    documents = data.get('documents')
+    if not isinstance(documents, list):
+        documents = []
+    category = (data.get('category') or '').strip() or 'General'
+    out = run_scholarship_apply_guide(name, url, documents, category)
     return jsonify({
         'status': out.get('status', 'ok'),
         'text': out.get('text', ''),
